@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     theme: 'snow'
   });
 
-  const topicForm = document.getElementById('topicForm');
+  const topicForm = document.getElementById('form');
   topicForm.onsubmit = async (event) => {
 
     event.preventDefault();

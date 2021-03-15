@@ -48,7 +48,7 @@
 <% session.data.createError
    } %>
 
-<form method="post" data-action="/topics/<%=  currentCategory.name %>/post" id="topicForm" class="topic__form">
+<form method="post" data-action="/topics/<%=  currentCategory.name %>/post" id="form" class="topic__form">
 
   <input
       type="text"
@@ -65,9 +65,8 @@
   <!-- </div> -->
   <textarea
         name="topic__desc"
-        id="topic__desc"
+        id="form_content"
         class="topic__form__hidden"
-        placeholder="Describe your topic..."
      ></textarea>
   <button class="topic__form__submitBtn" type="submit">Poster la description</button>
 

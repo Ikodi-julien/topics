@@ -1,116 +1,121 @@
+<%- include("partials/header.ejs") %>
 
-    <%- include("partials/header.ejs") %>
+<style>
+  .message__main--hidden {
+    display: none;
+  }
 
-    <style>
-       .message__main--hidden {
-          display: none;
-       }
-   </style>
+</style>
 
-   <% if (session.data.deleteError) { %> 
-      <div style="color: red;"><%= session.data.deleteError %></div>
+<% if (session.data.deleteError) { %>
+<div style="color: red;"><%= session.data.deleteError %></div>
 
-      <% session.data.deleteError = null;
+<% session.data.deleteError = null;
    } %>
 
-<% if (session.data.editError) { %> 
-   <div style="color: red;"><%= session.data.editError %></div>
+<% if (session.data.editError) { %>
+<div style="color: red;"><%= session.data.editError %></div>
 
-   <% session.data.editError = null;
+<% session.data.editError = null;
 } %>
 
-    <% if (session.data.userInfos !== null) {%> 
-    <h2>Bonjour je suis <%= session.data.userInfos.pseudo %> avec mon id= <%= session.data.userInfos.id %></h2>
-    <% } %> 
-    <h2 style="text-decoration:underlined;font-size:1.5rem; margin-bottom:1rem"class="main__topic__title" ><%= topic.title %> </h2>
+<% if (session.data.userInfos !== null) {%>
+<h2>Bonjour je suis <%= session.data.userInfos.pseudo %> avec mon id= <%= session.data.userInfos.id %></h2>
+<% } %>
+<h2 style="text-decoration:underlined;font-size:1.5rem; margin-bottom:1rem"class="main__topic__title" ><%= topic.title %> </h2>
 
-         <div id="message-list" class="message__list">
-           <!-- description of the thread is set as the first message -->
-            <article style="border:2px solid black; margin-bottom:1rem"class="message">
-               <header style="border:1px solid gray" class="message__header">
-                  <h3 class="message__author"><%= topic.pseudo %></h3>
-               </header>
-               <section class="message__main">
-                  <%= topic.topic_description %>
-               </section>
-               <footer class="message__footer">
-                  <p>Poste le <time>><%= new Date(topic.created_at).toLocaleDateString() %> - <%=new Date(topic.created_at).toLocaleTimeString()%></time></p>
-               </footer>
-            </article>
-           <!-- We loop through all the messages to display them -->
-           
-            <% for (message of messages) { %>
-                  
+<div id="message-list" class="message__list">
+  <!-- description of the thread is set as the first message -->
+  <article style="border:2px solid black; margin-bottom:1rem" class="message">
+    <header style="border:1px solid gray" class="message__header">
+      <h3 class="message__author"><%= topic.pseudo %></h3>
+    </header>
+    <section class="message__main">
+      <%= topic.topic_description %>
+    </section>
+    <footer class="message__footer">
+      <p>Poste le
+        <time><%= new Date(topic.created_at).toLocaleDateString() %> - <%=new Date(topic.created_at).toLocaleTimeString()%></time>
+      </p>
+    </footer>
+  </article>
+  <!-- We loop through all the messages to display them -->
 
-               <article style="border:2px solid black;margin-bottom:1rem" class="message">
-               <header style="display: flex; justify-content:space-between; border:1px solid gray" class="message__header">
-                  <h3 class="message__author"><%= message.pseudo %></h3>
+  <% for (message of messages) { %>
 
-                  <% if (session.data.logguedIn && message.users_id === session.data.userInfos.id) { %>
-                     <!-- user can access this buttons only if he is connected and owns the message -->
-                     <!-- button to edit the message -->
-                     <button class="edit__btn">edit</button>
 
-                     <!-- hidden form to delete the post-->
-                     <form action="<%= postUrl + '/delete' %>" method="POST">
-                        <input type="hidden" id="deleteMessageId" name="deleteMessageId" value="<%= message.id %> ">
-                        <button type="submit" style="color:red; font-weight:bold; border:2px solid red; border-radius: 5px; padding: 0 5px"> x</button>
-                     </form>
-                 
-                  <% } %>
+  <article style="border:2px solid black;margin-bottom:1rem" class="message">
+    <header style="display: flex; justify-content:space-between; border:1px solid gray" class="message__header">
+      <h3 class="message__author"><%= message.pseudo %></h3>
 
-               </header>
-               <% if (session.data.logguedIn && message.users_id === session.data.userInfos.id) { %>
-                     <!-- user can access the edit form only if he is connected and owns the message -->
+      <% if (session.data.logguedIn && message.users_id === session.data.userInfos.id) { %>
+      <!-- user can access this buttons only if he is connected and owns the message -->
+      <!-- button to edit the message -->
+      <button class="edit__btn">edit</button>
 
-                  <section class="message__main message__main--hidden">
-   
-                  <form action="<%= postUrl + '/edit' %>" method="POST" class="modMessage__form">
-                       
-                     <textarea
+      <!-- hidden form to delete the post-->
+      <form action="<%= postUrl + '/delete' %>" method="POST">
+        <input type="hidden" id="deleteMessageId" name="deleteMessageId" value="<%= message.id %> ">
+        <button type="submit" style="color:red; font-weight:bold; border:2px solid red; border-radius: 5px; padding: 0 5px"> x</button>
+      </form>
+
+      <% } %>
+
+    </header>
+    <% if (session.data.logguedIn && message.users_id === session.data.userInfos.id) { %>
+    <!-- user can access the edit form only if he is connected and owns the message -->
+
+    <section class="message__main message__main--hidden">
+
+      <form action="<%= postUrl + '/edit' %>" method="POST" class="modMessage__form">
+
+        <textarea
                         name="modMessage"
                         class="modMessage__area"
                         > <%= message.message_content %> </textarea>
-                     <input type="hidden" name="modMessageId" value="<%= message.id %> ">
-                     <button class="btn__submit" type="submit">Modifier</button>
-   
-                  </form>
-               </section>
-                  <% } %>
+        <input type="hidden" name="modMessageId" value="<%= message.id %> ">
+        <button class="btn__submit" type="submit">Modifier</button>
 
-               <section class="message__main">
-                  <%= message.message_content %>
-               </section>
-               <footer class="message__footer">
-                  <p>Poste le <time><%= new Date(message.created_at).toLocaleDateString() %> - <%=new Date(message.created_at).toLocaleTimeString()%></time></p>
-               </footer>
-            </article>
-           
-            <% } %>
-         
+      </form>
+    </section>
+    <% } %>
 
-         </div>
-           <!-- form to post messages-->
-           <% if (session.data.logguedIn) { %> 
+    <section class="message__main">
+      <%= message.message_content %>
+    </section>
+    <footer class="message__footer">
+      <p>Poste le
+        <time><%= new Date(message.created_at).toLocaleDateString() %> - <%=new Date(message.created_at).toLocaleTimeString()%></time>
+      </p>
+    </footer>
+  </article>
 
-            <% if (session.data.createError) { %> 
-               <div style="color: red;"><%= session.data.createError %></div>
+  <% } %>
 
-            <% session.data.createError = null;
+
+</div>
+<!-- form to post messages-->
+<% if (session.data.logguedIn) { %>
+
+<% if (session.data.createError) { %>
+<div style="color: red;"><%= session.data.createError %></div>
+
+<% session.data.createError = null;
             } %>
-         <form method="post" action="<%= postUrl + '/post' %>" id="message-form" class="message__form">
-            <label for="message">Repondre:</label>
-            <textarea
-               name="message"
-               id="message"
-               class="message__area"
-               placeholder="type your message here"
-            ></textarea>
-            <button class="btn__submit" type="submit">Poster</button>
-         </form>
+<form method="post" action="<%= postUrl + '/post' %>" id="form" class="topic__form">
+
+  <div class="topic__form__editorContainer">
+    <div id="editor"></div>
+  </div>
+  <textarea
+      name="message"
+      id="form_content"
+      class="topic__form__hidden"
+  ></textarea>
+  <button class="topic__form__submitBtn" type="submit">Poster</button>
+</form>
 <% } %>
 
 
 
-      <%- include("partials/footer.ejs", { jsFileUrl }) %> 
-    
+<%- include("partials/footer.ejs", { jsFileUrl }) %>
