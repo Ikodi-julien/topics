@@ -145,23 +145,25 @@
     height: 300px;
     align-items: center;
     justify-content: center;
-  }
+    padding: 10px;
 
-  &__header img {
-    height: 200px;
+    & img {
+      height: 200px;
+    }
   }
 
   &__description {
     font: 3rem "PT Mono";
     color: color.$mediumblue;
     padding-left: 50px;
-    width: 50%;
+    // width: 50%;
   }
 
   &__title {
     font: 2rem "Suez One";
     color: color.$mediumblue;
-    padding-top: 25%;
+    margin: 10px 0;
+    width: 50%;
 
     &__container {
       height: 270px;
@@ -175,20 +177,65 @@
       color: color.$mediumblue;
     }
   }
-}
 
-/**************************************/
-/*********TRES TEMPORAIRE**************/
-/*********( PAS TAPPER  )**************/
-/**************************************/
+  &__form {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    margin: 0 auto;
+    padding: 5px;
+    // border: 1px dashed red;
 
-.topic__form {
-  display: flex;
-  flex-direction: column;
-  width: 50%;
-  margin: 0 auto;
-}
+    &__title {
+      width: 50%;
+      padding: 10px 20px;
+      margin-bottom: 10px;
+      min-width: 300px;
+      border: none;
+      border-top: 1px solid color.$grey;
+      border-bottom: 1px solid color.$grey;
+    }
 
-.topic__form>* {
-  margin-top: 1rem;
+    &__row {
+      display: flex;
+      flex-direction: row;
+    }
+
+    &__editorContainer {
+      background-color: white;
+      display: flex;
+      flex-direction: column-reverse;
+      width: 100%;
+      height: auto;
+
+      .ql-snow {
+        border: none;
+        border-bottom: 1px solid color.$grey;
+      }
+
+      .ql-editor {
+        min-height: 150px;
+      }
+    }
+
+    &__hidden {
+      display: none;
+    }
+
+    &__submitBtn {
+      width: 20%;
+      height: 40px;
+      margin: 15px 0;
+      border: none;
+      border-radius: 5px;
+      background-color: color.$darkblue;
+      color: color.$light;
+      font-size: 12px;
+      cursor: pointer;
+
+      @media (max-width: 768px) {
+        margin: 10px 0;
+      }
+    }
+  }
 }

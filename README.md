@@ -1,5 +1,40 @@
-# forum
-forum
+# MyTopics
+Reprise du projet 'Forum' des Quillers en autonomie, poursuite de l'intégration du projet à partir de la V0.
+
+## Suivi de version:
+
+### V1 : Le ?
+- FRONT :
+  - Intégration formulaire
+
+### V0 : état le 15/03/2021
+
+#### TO DO :
+- BACK :
+  - Passer sur une API strapi,
+
+- FRONT :
+  - Intégration des formulaires avec Quilljs,
+  - Wireframe + intégration page message d'un topic,
+  - Gérer le fetch.
+  - Revoir l'intégration de la page topics d'une catégorie,
+  - Faire le responsive du site (...),
+
+#### DONE :
+- BACK :
+  - App node.js - express,
+  - Base de donnée SQL,
+  - Fonctionnalités :
+    - Création de sujet pour une catégorie,
+    - Post de message dans un sujet (gestion de la modification selon utilisateur),
+    - Connexion user (y compris avec API Google et Github),
+    - Modification des données user dans l'espace membre,
+- FRONT :
+  - HTML, CSS et JS, (pas de framework),
+  - Signature visuelle avec 'Gandoulf',
+  - Intégration visuelle faite pour connexion, profil.
+  - Intégration partielle sur homepage, categorie, topics.
+
 
 ## Setup base de donnée
 Avoir postgres d'installer

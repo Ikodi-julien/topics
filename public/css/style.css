@@ -117,6 +117,7 @@
   height: 300px;
   align-items: center;
   justify-content: center;
+  padding: 10px;
 }
 .topic__header img {
   height: 200px;
@@ -125,12 +126,12 @@
   font: 3rem "PT Mono";
   color: #5267B0;
   padding-left: 50px;
-  width: 50%;
 }
 .topic__title {
   font: 2rem "Suez One";
   color: #5267B0;
-  padding-top: 25%;
+  margin: 10px 0;
+  width: 50%;
 }
 .topic__title__container {
   height: 270px;
@@ -142,20 +143,58 @@
   font: 1rem "Suez One";
   color: #5267B0;
 }
-
-/**************************************/
-/*********TRES TEMPORAIRE**************/
-/*********( PAS TAPPER  )**************/
-/**************************************/
 .topic__form {
   display: flex;
   flex-direction: column;
-  width: 50%;
+  width: 70%;
   margin: 0 auto;
+  padding: 5px;
 }
-
-.topic__form > * {
-  margin-top: 1rem;
+.topic__form__title {
+  width: 50%;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  min-width: 300px;
+  border: none;
+  border-top: 1px solid #828282;
+  border-bottom: 1px solid #828282;
+}
+.topic__form__row {
+  display: flex;
+  flex-direction: row;
+}
+.topic__form__editorContainer {
+  background-color: white;
+  display: flex;
+  flex-direction: column-reverse;
+  width: 100%;
+  height: auto;
+}
+.topic__form__editorContainer .ql-snow {
+  border: none;
+  border-bottom: 1px solid #828282;
+}
+.topic__form__editorContainer .ql-editor {
+  min-height: 150px;
+}
+.topic__form__hidden {
+  display: none;
+}
+.topic__form__submitBtn {
+  width: 20%;
+  height: 40px;
+  margin: 15px 0;
+  border: none;
+  border-radius: 5px;
+  background-color: #4D5497;
+  color: #fcf9f2;
+  font-size: 12px;
+  cursor: pointer;
+}
+@media (max-width: 768px) {
+  .topic__form__submitBtn {
+    margin: 10px 0;
+  }
 }
 
 /*-------------------------------------------------*/
@@ -483,7 +522,6 @@
   align-items: center;
   overflow: hidden;
   position: relative;
-  width: 130px;
   height: 50px;
   font-family: "PT Mono", serif;
   font-size: 20px;
@@ -492,7 +530,7 @@
   border: 3px solid #4D5497;
   box-sizing: border-box;
   border-radius: 2px;
-  padding: 10px;
+  padding: 10px 8px;
 }
 .header__nav__loginButton:hover > a {
   color: #EFF8FA;
@@ -654,6 +692,14 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+strong {
+  font-weight: bold;
+}
+
+em {
+  font-style: italic;
 }
 
 .main__container {

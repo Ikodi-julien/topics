@@ -1,61 +1,56 @@
 <%- include("partials/header.ejs") %>
 
 <div class="categorypage__main__container">
-   <aside class="categories__container">
-      <ul class="categories__list">
-         <% categories.forEach(category => { %>
-         <li class="categories__list__element">
-            <a href="/categories/<%=  category.name %>"
+  <aside class="categories__container">
+    <ul class="categories__list">
+      <% categories.forEach(category => { %>
+      <li class="categories__list__element">
+        <a href="/categories/<%=  category.name %>"
                ><%= category.name %>
             </a>
-         </li>
-         <% }); %>
-      </ul>
-      <img
+      </li>
+      <% }); %>
+    </ul>
+    <img
          class="categories__category__image"
          src="/assets/browse/<%= currentCategory.name %>.png"
          alt="<%= currentCategory.name %>"
       />
    </aside>
 
-   <div class="topics__container">
+    <div class="topics__container">
       <h1 class="categories__category__title"><%= currentCategory.name %></h1>
 
       <% for(let topic of topics) { %>
       <article class="topic__container">
-         <header class="topic__header">
-            <img
+        <header class="topic__header">
+          <img
                src="/assets/browse/<%= currentCategory.name %>.png"
                alt="<%= currentCategory.name %>"
             />
-            <h2 class="topic__description"><%= topic.topic_description %></h2>
-         </header>
-         <footer class="topic__title__container">
-            <h2 class="topic__title"><a href="/topics/<%= currentCategory.name %>/<%= topic.id %>"><%=topic.title%></a></h2>
-            <h3 class="topic__title__author">by <%= topic.pseudo %></h3>
-         </footer>
+          <h2 class="topic__description"><%= topic.topic_description %></h2>
+        </header>
+        <footer class="topic__title__container">
+          <h2 class="topic__title"><a href="/topics/<%= currentCategory.name %>/<%= topic.id %>"><%=topic.title%></a></h2>
+          <h3 class="topic__title__author">by <%= topic.pseudo %></h3>
+        </footer>
       </article>
       <% } %>
-   </div>
+    </div>
 </div>
 
 
-<% if (session.data.logguedIn) { %> 
-   
-   <% if (session.data.createError) {%> 
-   <div style="color: red;"><%= session.data.createError %></div>
+<% if (session.data.logguedIn) { %>
 
-   <% session.data.createError
-   } %> 
+<% if (session.data.createError) {%>
+<div style="color: red;"><%= session.data.createError %></div>
 
-<form
-   method="post"
-   action="/topics/<%=  currentCategory.name %>/post"
-   id="topic-form"
-   class="topic__form"
->
-   <label for="topic__form__title">Titre de votre topic</label>
-   <input
+<% session.data.createError
+   } %>
+
+<form method="post" data-action="/topics/<%=  currentCategory.name %>/post" id="topicForm" class="topic__form">
+
+  <input
       type="text"
       name="topic__title"
       id="topic__title"
@@ -63,14 +58,20 @@
       placeholder="title of your topic..."
    />
 
-   <label for="topic__form__description">description de votre topic</label>
-   <textarea
-      name="topic__desc"
-      id="topic__desc"
-      class="topic__form__area"
-      placeholder="Describe your topic..."
-   ></textarea>
-   <button class="btn__submit" type="submit">Poster</button>
+
+  <div class="topic__form__editorContainer">
+    <div id="editor"></div>
+  </div>
+  <!-- </div> -->
+  <textarea
+        name="topic__desc"
+        id="topic__desc"
+        class="topic__form__hidden"
+        placeholder="Describe your topic..."
+     ></textarea>
+  <button class="topic__form__submitBtn" type="submit">Poster la description</button>
+
+
 </form>
 <% } %>
 <%- include("partials/footer.ejs") %>
