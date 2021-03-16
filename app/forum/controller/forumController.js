@@ -35,9 +35,12 @@ const forumController = {
 
   },
 
-  // code for route /categories/:category
-
-  getAllTopicsByCategoryId: async (request, response, next) => {
+  /**
+   * Returns all catégories and currentcatégorie from request
+   * @param {Request} request 
+   * @returns[] - [categories, currentCategory]
+   */
+  getOneAndAllCategories: async (request) => {
 
     try {
       const categoryName = request.params.categoryName;
@@ -50,12 +53,28 @@ const forumController = {
       const currentCategory = categories.find(category => category.name === categoryName);
       if (!currentCategory) {
         throw new Error(`404 - Category "${categoryName}" not found`);
+
+      } else {
+        return [categories, currentCategory];
       }
+    } catch (error) {
+      return error
+    }
+  },
+
+  // code for route /categories/:category
+
+  getAllTopicsByCategoryId: async (request, response, next) => {
+
+    try {
+
+      const [categories, currentCategory] = await forumController.getOneAndAllCategories(request);
 
       // now that i have the current category and the list of categories for the side menu, i need to get all topic by categoryId
-      results = await forumDB.getTopicsByCategoryId(currentCategory.id);
+      let results = await forumDB.getTopicsByCategoryId(currentCategory.id);
       const topics = results.rows;
 
+      console.log(topics)
       forumView.category(response, {
         topics: topics,
         categories: categories,
@@ -98,10 +117,15 @@ const forumController = {
       //then i need to get all the messages from this topic
       results = await forumDB.getAllMessagesByTopicId(topicId);
 
+      // get the categories infos
+      const [categories, currentCategory] = await forumController.getOneAndAllCategories(request);
+
       const messages = results.rows;
       forumView.topic(response, {
         topic: currentTopic,
         messages,
+        categories,
+        currentCategory,
         postUrl: request.url,
         session: request.session,
         info: response.info,
@@ -142,7 +166,8 @@ const forumController = {
 
       //...here i just make sure author, description and content are not empty
       if (!newTopic.topicDesc || !newTopic.title) {
-        throw new Error('Empty fields - your Topic was not created because your title or message content was empty');
+        throw new Error(
+          'Empty fields - your Topic was not created because your title or message content was empty');
       }
       //we search the category id by its name store in req.params
       let results = await forumDB.getCategoryIdByName(categoryName);

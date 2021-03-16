@@ -1,0 +1,354 @@
+@use './abstract/colors'as color;
+@use './abstract/sizes'as size;
+/**************************************/
+/*********  CATEGORIES   **************/
+/**************************************/
+
+.categories {
+  &__box__image {
+    display: block;
+    margin: 0 auto;
+    height: 400px;
+    width: auto;
+    padding: 20px 0;
+  }
+
+  &__main {
+    &__title {
+      font: 3rem "Suez One";
+      font-weight: 700;
+      color: color.$mediumblue;
+      text-align: center;
+      margin: 120px 0;
+    }
+
+    &__container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__box {
+    background-color: #fff;
+    width: 48%;
+    height: 610px;
+    border-radius: 14px;
+    margin-bottom: 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+
+    &__title {
+      position: absolute;
+      top: 50%;
+      bottom: 0;
+      font-size: 2.5rem;
+      padding-left: 60px;
+      color: color.$mediumblue;
+
+      &__container {
+        position: relative;
+        height: 210px;
+        background: no-repeat url(/assets/browse/canvas.png) left;
+        background-size: 100%;
+      }
+    }
+
+    &__title:hover {
+      text-decoration: underline;
+      font-weight: 600;
+      text-decoration-style: wavy;
+    }
+
+    &__title::first-letter {
+      text-transform: uppercase;
+    }
+  }
+}
+
+/**************************************/
+/*********    CATEGORY   **************/
+/**************************************/
+
+.categorypage__main__container {
+  display: flex;
+}
+
+.categories {
+
+  &__container {
+    padding-top: 60px;
+    width: 200px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &__element {
+      font: 1.4rem "PT Mono";
+      border-radius: 5px;
+      font-weight: bold;
+      color: color.$mediumblue;
+      text-align: center;
+      width: 160px;
+      background-color: color.$light;
+      padding: 5px;
+      border: 1px solid color.$bubblegumpink;
+      margin-bottom: 10px;
+      transform: rotate(0);
+      transition: transform 250ms;
+    }
+
+    &__element:hover {
+      transform: rotate(10deg);
+      transition: transform 150ms;
+    }
+  }
+
+  &__category {
+
+    &__image {
+      width: 200px;
+      margin: 100px auto 50px;
+    }
+
+    &__title {
+      font: 2rem "PT Mono";
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-weight: 800;
+      color: color.$mediumblue;
+    }
+  }
+
+}
+
+/*--------------------------------*/
+/*--------- TOPIC / Message ------*/
+/*--------------------------------*/
+
+.messagesPage {
+  &__topicContainer {
+    padding: 20px 10vw;
+  }
+
+  &__mainContainer {
+    display: flex;
+  }
+}
+
+
+.topics,
+.messages {
+  &__main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+    padding: 0 10vw;
+    padding-top: 60px;
+  }
+
+  &__container {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.message:hover .--messageFooter {
+  display: flex;
+  width: 40px;
+  min-width: 40px;
+  flex-direction: column;
+  background-color: transparent;
+}
+
+.topic,
+.message {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid color.$bubblegumpink;
+  border-radius: 5px;
+  overflow: hidden;
+
+  &__title {
+
+    width: 100%;
+    padding: 15px 0;
+    font: 1.6rem "Suez One";
+    color: color.$mediumblue;
+    text-align: center;
+    border: 1px solid color.$yellow;
+    border-radius: 5px;
+  }
+
+  &__header {
+    width: 80px;
+    min-width: 80px;
+
+    &__author {
+      font: 1rem "Suez One";
+      color: color.$mediumblue;
+      text-align: center;
+    }
+
+    & img {
+      width: 100%;
+      max-height: 100px;
+      width: 100%;
+    }
+
+    &__createDate {
+      color: color.$mediumblue;
+      font-size: size.$font-XS;
+      text-align: center;
+    }
+  }
+
+  &__main {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    padding: 8px;
+
+    &__title {
+      font: 1rem "Suez One";
+      color: color.$mediumblue;
+      margin: 5px;
+    }
+
+    &__description {
+      font: 0.8rem "PT Mono";
+      color: color.$mediumblue;
+    }
+
+
+  }
+
+  &__footer {
+    width: 80px;
+    min-width: 80px;
+    position: relative;
+    background-color: color.$verylightblue;
+
+    &__title {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      color: color.$grey;
+      font-size: size.$font-XS;
+      padding: 5px;
+      text-align: center;
+    }
+
+    &__nbMessages {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: color.$mediumblue;
+    }
+  }
+
+  &__topic {
+    border: none;
+    margin-top: 10px;
+
+    &__main {
+      padding: 20px;
+
+      &__description {
+        font: size.$font-L "PT Mono";
+        color: color.$mediumblue;
+      }
+    }
+  }
+
+  &__boutton__control {
+    border: none;
+    width: 100%;
+    background-color: transparent;
+    padding: 8px;
+    color: color.$darkblue;
+  }
+
+  /*-------------------------------------------------*/
+  /*--------- TOPIC AND MESSAGE FORM-----------------*/
+  /*-------------------------------------------------*/
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    max-width: 700px;
+    margin: 60px;
+
+    &__title {
+      width: 50%;
+      padding: 10px 20px;
+      margin-bottom: 10px;
+      min-width: 300px;
+      border: none;
+      border-bottom: 1px solid color.$bubblegumpink;
+    }
+
+    &__row {
+      display: flex;
+      flex-direction: row;
+    }
+
+    &__editorContainer {
+      background-color: white;
+      display: flex;
+      flex-direction: column-reverse;
+      width: 100%;
+      height: auto;
+
+      .ql-snow {
+        border: none;
+        border-bottom: 1px solid color.$bubblegumpink;
+      }
+
+      .ql-editor {
+        min-height: 150px;
+      }
+    }
+
+    &__hidden {
+      display: none;
+    }
+
+    &__submitBtn {
+      width: 20%;
+      height: 40px;
+      margin: 15px 0;
+      border: none;
+      border-radius: 5px;
+      background-color: color.$darkblue;
+      color: color.$light;
+      font-size: 12px;
+      cursor: pointer;
+
+      @media (max-width: 768px) {
+        margin: 10px 0;
+      }
+    }
+  }
+}
+
+.--topicHiddenForm {
+  display: none;
+}
+
+.--messageFooter {
+  display: none;
+}

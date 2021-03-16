@@ -1,56 +1,52 @@
 <%- include("partials/header.ejs") %>
 
 <div class="categorypage__main__container">
-  <aside class="categories__container">
-    <ul class="categories__list">
-      <% categories.forEach(category => { %>
-      <li class="categories__list__element">
-        <a href="/categories/<%=  category.name %>"
-               ><%= category.name %>
-            </a>
-      </li>
-      <% }); %>
-    </ul>
-    <img
-         class="categories__category__image"
-         src="/assets/browse/<%= currentCategory.name %>.png"
-         alt="<%= currentCategory.name %>"
-      />
-   </aside>
 
+  <%- include("partials/categoriesAside") %>
+
+
+  <div class="topics__main">
     <div class="topics__container">
       <h1 class="categories__category__title"><%= currentCategory.name %></h1>
 
+
       <% for(let topic of topics) { %>
-      <article class="topic__container">
+      <article class="topic">
         <header class="topic__header">
-          <img
-               src="/assets/browse/<%= currentCategory.name %>.png"
-               alt="<%= currentCategory.name %>"
-            />
-          <h2 class="topic__description"><%= topic.topic_description %></h2>
+          <!-- Mettre une photo et nom auteur -->
+          <img src="/assets/default_user.png" alt="avatar">
+          <h3 class="topic__header__author">by <%= topic.pseudo %></h3>
+          <p class="topic__header__createDate">
+            le <time><%= new Date(topic.created_at).toLocaleDateString() %></time>
+          </p>
         </header>
-        <footer class="topic__title__container">
-          <h2 class="topic__title"><a href="/topics/<%= currentCategory.name %>/<%= topic.id %>"><%=topic.title%></a></h2>
-          <h3 class="topic__title__author">by <%= topic.pseudo %></h3>
+
+        <main class="topic__main">
+          <h2 class="topic__main__title"><a href="/topics/<%= currentCategory.name %>/<%= topic.id %>"><%=topic.title%></a></h2>
+          <p class="topic__main__description"><%= topic.topic_description %></>
+        </main>
+
+        <footer class="topic__footer">
+          <div class="topic__footer__title">Comments</div>
+          <div class="topic__footer__nbMessages"><%= topic.nb_message %></div>
         </footer>
       </article>
       <% } %>
     </div>
-</div>
 
+    <!-- ici débute le formulaire -->
 
-<% if (session.data.logguedIn) { %>
+    <% if (session.data.logguedIn) { %>
 
-<% if (session.data.createError) {%>
-<div style="color: red;"><%= session.data.createError %></div>
+    <% if (session.data.createError) {%>
+    <div style="color: red;"><%= session.data.createError %></div>
 
-<% session.data.createError
+    <% session.data.createError
    } %>
 
-<form method="post" data-action="/topics/<%=  currentCategory.name %>/post" id="form" class="topic__form">
+    <form method="post" data-action="/topics/<%=  currentCategory.name %>/post" id="form" class="topic__form">
 
-  <input
+      <input
       type="text"
       name="topic__title"
       id="topic__title"
@@ -59,18 +55,24 @@
    />
 
 
-  <div class="topic__form__editorContainer">
-    <div id="editor"></div>
-  </div>
-  <!-- </div> -->
-  <textarea
+      <div class="topic__form__editorContainer">
+        <div id="editor"></div>
+      </div>
+      <!-- </div> -->
+      <textarea
         name="topic__desc"
         id="form_content"
         class="topic__form__hidden"
      ></textarea>
-  <button class="topic__form__submitBtn" type="submit">Poster la description</button>
+      <button class="topic__form__submitBtn" type="submit">Poster la description</button>
 
 
-</form>
-<% } %>
+    </form>
+    <% } %>
+
+    <!-- FIN FORMULAIRE on ferme topic__container ici dessous !-->
+  </div>
+</div>
+
+
 <%- include("partials/footer.ejs") %>

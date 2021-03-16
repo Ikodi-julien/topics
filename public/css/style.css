@@ -1,3 +1,4 @@
+/*----------------------------*/
 /**************************************/
 /*********  CATEGORIES   **************/
 /**************************************/
@@ -56,18 +57,42 @@
 }
 
 /**************************************/
-/*********    TOPICS     **************/
+/*********    CATEGORY   **************/
 /**************************************/
 .categorypage__main__container {
   display: flex;
 }
 
 .categories__container {
-  margin-top: 100px;
-  height: 85vh;
+  padding-top: 60px;
+  width: 200px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+}
+.categories__list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.categories__list__element {
+  font: 1.4rem "PT Mono";
+  border-radius: 5px;
+  font-weight: bold;
+  color: #5267B0;
+  text-align: center;
+  width: 160px;
+  background-color: #fcf9f2;
+  padding: 5px;
+  border: 1px solid #EA8C8C;
+  margin-bottom: 10px;
+  transform: rotate(0);
+  transition: transform 250ms;
+}
+.categories__list__element:hover {
+  transform: rotate(10deg);
+  transition: transform 150ms;
 }
 .categories__category__image {
   width: 200px;
@@ -79,108 +104,195 @@
   letter-spacing: 3px;
   font-weight: 800;
   color: #5267B0;
-  margin-top: 100px;
-}
-.categories__list__element {
-  font: 1.4rem "PT Mono";
-  border-radius: 5px;
-  font-weight: bold;
-  margin-left: 20px;
-  color: #5267B0;
-  text-align: center;
-  width: 180px;
-  background-color: #fff;
-  padding: 5px 15px;
-  border: 1px solid #ea8c8c;
-  margin-bottom: 10px;
-}
-.categories__list__element:hover {
-  font-size: 1.5rem;
-  transition: font-size 250ms ease-in;
 }
 
-.topics__container {
-  margin-left: 15%;
-  padding: 20px 20px;
+/*--------------------------------*/
+/*--------- TOPIC / Message ------*/
+/*--------------------------------*/
+.messagesPage__topicContainer {
+  padding: 20px 10vw;
 }
-
-.topic__container {
-  background-color: #fff;
-  width: 740px;
-  border-radius: 5px;
-  border: 4px solid #ffca41;
-  overflow: hidden;
-  margin: 50px auto 0;
-}
-.topic__header {
+.messagesPage__mainContainer {
   display: flex;
-  height: 300px;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
 }
-.topic__header img {
-  height: 200px;
-}
-.topic__description {
-  font: 3rem "PT Mono";
-  color: #5267B0;
-  padding-left: 50px;
-}
-.topic__title {
-  font: 2rem "Suez One";
-  color: #5267B0;
-  margin: 10px 0;
-  width: 50%;
-}
-.topic__title__container {
-  height: 270px;
-  background: no-repeat url(/assets/browse/canvas.png) left;
-  background-size: 100%;
-  padding-left: 8%;
-}
-.topic__title__author {
-  font: 1rem "Suez One";
-  color: #5267B0;
-}
-.topic__form {
+
+.topics__main,
+.messages__main {
   display: flex;
   flex-direction: column;
-  width: 70%;
-  margin: 0 auto;
-  padding: 5px;
+  justify-content: space-between;
+  flex-grow: 1;
+  padding: 0 10vw;
+  padding-top: 60px;
 }
-.topic__form__title {
+.topics__container,
+.messages__container {
+  display: flex;
+  flex-direction: column;
+}
+
+.message:hover .--messageFooter {
+  display: flex;
+  width: 40px;
+  min-width: 40px;
+  flex-direction: column;
+  background-color: transparent;
+}
+
+.topic,
+.message {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #EA8C8C;
+  border-radius: 5px;
+  overflow: hidden;
+  /*-------------------------------------------------*/
+  /*--------- TOPIC AND MESSAGE FORM-----------------*/
+  /*-------------------------------------------------*/
+}
+.topic__title,
+.message__title {
+  width: 100%;
+  padding: 15px 0;
+  font: 1.6rem "Suez One";
+  color: #5267B0;
+  text-align: center;
+  border: 1px solid #ffca41;
+  border-radius: 5px;
+}
+.topic__header,
+.message__header {
+  width: 80px;
+  min-width: 80px;
+}
+.topic__header__author,
+.message__header__author {
+  font: 1rem "Suez One";
+  color: #5267B0;
+  text-align: center;
+}
+.topic__header img,
+.message__header img {
+  width: 100%;
+  max-height: 100px;
+  width: 100%;
+}
+.topic__header__createDate,
+.message__header__createDate {
+  color: #5267B0;
+  font-size: 10px;
+  text-align: center;
+}
+.topic__main,
+.message__main {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+  padding: 8px;
+}
+.topic__main__title,
+.message__main__title {
+  font: 1rem "Suez One";
+  color: #5267B0;
+  margin: 5px;
+}
+.topic__main__description,
+.message__main__description {
+  font: 0.8rem "PT Mono";
+  color: #5267B0;
+}
+.topic__footer,
+.message__footer {
+  width: 80px;
+  min-width: 80px;
+  position: relative;
+  background-color: #eff8fa;
+}
+.topic__footer__title,
+.message__footer__title {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  color: #828282;
+  font-size: 10px;
+  padding: 5px;
+  text-align: center;
+}
+.topic__footer__nbMessages,
+.message__footer__nbMessages {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #5267B0;
+}
+.topic__topic,
+.message__topic {
+  border: none;
+  margin-top: 10px;
+}
+.topic__topic__main,
+.message__topic__main {
+  padding: 20px;
+}
+.topic__topic__main__description,
+.message__topic__main__description {
+  font: 20px "PT Mono";
+  color: #5267B0;
+}
+.topic__boutton__control,
+.message__boutton__control {
+  border: none;
+  width: 100%;
+  background-color: transparent;
+  padding: 8px;
+  color: #4D5497;
+}
+.topic__form,
+.message__form {
+  display: flex;
+  flex-direction: column;
+  max-width: 700px;
+  margin: 60px;
+}
+.topic__form__title,
+.message__form__title {
   width: 50%;
   padding: 10px 20px;
   margin-bottom: 10px;
   min-width: 300px;
   border: none;
-  border-top: 1px solid #828282;
-  border-bottom: 1px solid #828282;
+  border-bottom: 1px solid #EA8C8C;
 }
-.topic__form__row {
+.topic__form__row,
+.message__form__row {
   display: flex;
   flex-direction: row;
 }
-.topic__form__editorContainer {
+.topic__form__editorContainer,
+.message__form__editorContainer {
   background-color: white;
   display: flex;
   flex-direction: column-reverse;
   width: 100%;
   height: auto;
 }
-.topic__form__editorContainer .ql-snow {
+.topic__form__editorContainer .ql-snow,
+.message__form__editorContainer .ql-snow {
   border: none;
-  border-bottom: 1px solid #828282;
+  border-bottom: 1px solid #EA8C8C;
 }
-.topic__form__editorContainer .ql-editor {
+.topic__form__editorContainer .ql-editor,
+.message__form__editorContainer .ql-editor {
   min-height: 150px;
 }
-.topic__form__hidden {
+.topic__form__hidden,
+.message__form__hidden {
   display: none;
 }
-.topic__form__submitBtn {
+.topic__form__submitBtn,
+.message__form__submitBtn {
   width: 20%;
   height: 40px;
   margin: 15px 0;
@@ -192,9 +304,18 @@
   cursor: pointer;
 }
 @media (max-width: 768px) {
-  .topic__form__submitBtn {
+  .topic__form__submitBtn,
+.message__form__submitBtn {
     margin: 10px 0;
   }
+}
+
+.--topicHiddenForm {
+  display: none;
+}
+
+.--messageFooter {
+  display: none;
 }
 
 /*-------------------------------------------------*/

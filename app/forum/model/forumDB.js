@@ -3,7 +3,7 @@ const client = require('../../client');
 const forumDB = {
 
   // thanks to closure, i manage to pass arguments to the client.query callback
-  promiseCB: function (resolve, reject) {
+  promiseCB: function(resolve, reject) {
     return (err, data) => {
       if (err) {
         reject(err);
@@ -12,11 +12,11 @@ const forumDB = {
       }
     }
   },
-  
+
   /*
-  **  READ QUERIES
-  */
-  
+   **  READ QUERIES
+   */
+
   getCategories: () => {
     return new Promise((resolve, reject) => {
       const query = `SELECT * from forum.category`;
@@ -37,7 +37,15 @@ const forumDB = {
   getTopicsByCategoryId: (categoryId) => {
     return new Promise((resolve, reject) => {
 
-      const query = `SELECT topic.*, users.pseudo FROM forum.topic JOIN forum.users ON forum.topic.users_id=forum.users.id WHERE category_id=$1 ORDER BY topic.created_at ASC`;
+      const query = `
+      SELECT topic.*, users.pseudo, forum.message.topic_id, count(forum.message.topic_id) AS nb_message
+      FROM forum.topic
+      JOIN forum.users ON forum.topic.users_id = forum.users.id
+      LEFT JOIN forum.message ON forum.message.topic_id = forum.topic.id
+      WHERE category_id = $1
+      GROUP BY forum.topic.id, users.pseudo, forum.message.topic_id
+      ORDER BY topic.created_at ASC;
+      `;
 
       client.query(query, [+categoryId], forumDB.promiseCB(resolve, reject));
     });
@@ -62,23 +70,25 @@ const forumDB = {
   getAllMessagesByTopicId: (topicId) => {
     return new Promise((resolve, reject) => {
 
-      const query = `SELECT message.*, users.pseudo FROM forum.message JOIN forum.users ON message.users_id=users.id WHERE topic_id=$1 ORDER BY message.created_at ASC`;
+      const query =
+        `SELECT message.*, users.pseudo FROM forum.message JOIN forum.users ON message.users_id=users.id WHERE topic_id=$1 ORDER BY message.created_at ASC`;
 
       client.query(query, [+topicId], forumDB.promiseCB(resolve, reject));
     });
   },
 
   /*
-  **  CREATE QUERIES
-  */
+   **  CREATE QUERIES
+   */
 
   createNewTopic: (newTopic) => {
     return new Promise((resolve, reject) => {
 
-    const query = `INSERT INTO forum.topic (title, topic_description, users_id, category_id) VALUES
+      const query = `INSERT INTO forum.topic (title, topic_description, users_id, category_id) VALUES
         ($1, $2, $3, $4)`;
-    client.query(query, [newTopic.title, newTopic.topicDesc, newTopic.users_id, newTopic.categoryId], forumDB.promiseCB(resolve, reject));
-  });
+      client.query(query, [newTopic.title, newTopic.topicDesc, newTopic.users_id, newTopic.categoryId], forumDB
+        .promiseCB(resolve, reject));
+    });
 
   },
 
@@ -86,13 +96,14 @@ const forumDB = {
     return new Promise((resolve, reject) => {
       const query = `INSERT INTO forum.message (users_id, message_content, topic_id) VALUES
           ($1, $2, $3)`;
-      client.query(query, [newMessage.users_id, newMessage.messageContent, newMessage.topicId], forumDB.promiseCB(resolve, reject));
+      client.query(query, [newMessage.users_id, newMessage.messageContent, newMessage.topicId], forumDB
+        .promiseCB(resolve, reject));
     });
   },
 
   /*
-  **  DELETE QUERIES
-  */
+   **  DELETE QUERIES
+   */
 
   delMessageById: (objParams) => {
     return new Promise((resolve, reject) => {
@@ -107,8 +118,8 @@ const forumDB = {
   },
 
   /*
-  **  UPDATE QUERIES
-  */
+   **  UPDATE QUERIES
+   */
 
   updateMessage: (objParams, callback) => {
     return new Promise((resolve, reject) => {
