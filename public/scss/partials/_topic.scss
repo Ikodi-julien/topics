@@ -75,12 +75,13 @@
 
 .categorypage__main__container {
   display: flex;
+  margin-top: 60px;
 }
 
 .categories {
 
   &__container {
-    padding-top: 60px;
+    // padding-top: 60px;
     width: 200px;
     height: 100%;
     display: flex;
@@ -118,7 +119,7 @@
 
     &__image {
       width: 200px;
-      margin: 100px auto 50px;
+      margin: 30px auto;
     }
 
     &__title {
@@ -138,7 +139,7 @@
 
 .messagesPage {
   &__topicContainer {
-    padding: 20px 10vw;
+    padding: 20px 10vw 0 10vw;
   }
 
   &__mainContainer {
@@ -155,13 +156,16 @@
     justify-content: space-between;
     flex-grow: 1;
     padding: 0 10vw;
-    padding-top: 60px;
   }
 
   &__container {
     display: flex;
     flex-direction: column;
   }
+}
+
+.--messagesMainSmaller {
+  padding-top: 0px;
 }
 
 .message:hover .--messageFooter {
@@ -265,7 +269,7 @@
     margin-top: 10px;
 
     &__main {
-      padding: 20px;
+      padding: 20px 20px 0 20px;
 
       &__description {
         font: size.$font-L "PT Mono";
@@ -274,12 +278,24 @@
     }
   }
 
-  &__boutton__control {
-    border: none;
-    width: 100%;
-    background-color: transparent;
-    padding: 8px;
-    color: color.$darkblue;
+  &__button {
+    &__control {
+      border: none;
+      width: 50%;
+      background-color: transparent;
+      padding: 8px;
+      color: color.$darkblue;
+      cursor: pointer;
+    }
+
+    &__row {
+      position: absolute;
+      bottom: 0;
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      justify-content: space-around;
+    }
   }
 
   /*-------------------------------------------------*/

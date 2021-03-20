@@ -6,7 +6,7 @@ const connexionDB = {
   getUserByPseudo: function(pseudo, callback) {
 
     const query = {
-      text: `SELECT * FROM forum.users 
+      text: `SELECT * FROM public."users-permissions_user" 
     WHERE pseudo=$1;`,
       values: [pseudo]
     }
@@ -17,8 +17,14 @@ const connexionDB = {
   getUserByEmail: function(email, callback) {
 
     const query = {
-      text: `SELECT * FROM forum.users 
-    WHERE email=$1;`,
+      text: `
+      SELECT public."users-permissions_user".*, public."users-permissions_role".name as role_string
+      FROM public."users-permissions_user"
+      JOIN public."users-permissions_role"
+      ON public.
+      "users-permissions_role".id = public.
+      "users-permissions_user".role
+      WHERE email=$1;`,
       values: [email]
     }
 
@@ -28,7 +34,7 @@ const connexionDB = {
   getPseudo: function(pseudo, callback) {
 
     const query = {
-      text: `SELECT * FROM forum.users 
+      text: `SELECT * FROM public."users-permissions_user" 
     WHERE pseudo=$1;`,
       values: [pseudo]
     }
@@ -39,17 +45,18 @@ const connexionDB = {
   getEmail: function(email, callback) {
 
     const query = {
-      text: `SELECT * FROM forum.users 
+      text: `SELECT * FROM public."users-permissions_user" 
     WHERE email=$1;`,
       values: [email]
     }
 
     client.query(query, callback)
   },
+
   insertProfil: function(dataUser, callback) {
 
     const query = {
-      text: `INSERT INTO forum.users (pseudo, firstname, lastname, password, email, status)
+      text: `INSERT INTO public."users-permissions_user" (pseudo, firstname, lastname, password, email, status)
     VALUES ($1, $2, $3, $4, $5, 'stdUser') RETURNING id, pseudo, status;`,
       values: [dataUser.pseudo, dataUser.firstName, dataUser.lastName, dataUser.hashedPass, dataUser.email]
     };
@@ -59,7 +66,7 @@ const connexionDB = {
 
   isEmailInDB: (email, callback) => {
 
-    const query = `SELECT * FROM forum.users WHERE email = '${email}';`;
+    const query = `SELECT * FROM public."users-permissions_user" WHERE email = '${email}';`;
 
     client.query(query, callback);
   },
@@ -67,7 +74,7 @@ const connexionDB = {
   insertDefaultPassword: (data, callback) => {
 
     const query = {
-      text: `UPDATE forum.users
+      text: `UPDATE public."users-permissions_user"
     SET password = $1
     WHERE id = $2 RETURNING password;`,
       values: [data.hashedPassword, data.id]
@@ -78,7 +85,7 @@ const connexionDB = {
 
   deleteUser: (id, callback) => {
 
-    const query = `DELETE FROM users
+    const query = `DELETE FROM public."users-permissions_user"
     WHERE id = ${id};`
 
     client.query(query, callback);

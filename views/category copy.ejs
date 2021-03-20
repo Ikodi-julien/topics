@@ -7,11 +7,31 @@
 
   <div class="topics__main">
     <div class="topics__container">
-      <span id="catId" style="display:none;"><%= currentCategory.id %></span>
       <h1 class="categories__category__title"><%= currentCategory.name %></h1>
 
-      <!-- ICI S'INSÈRE LES TOPICS -->
 
+      <% for(let topic of topics) { %>
+      <article class="topic">
+        <header class="topic__header">
+          <!-- Mettre une photo et nom auteur -->
+          <img src="/assets/default_user.png" alt="avatar">
+          <h3 class="topic__header__author">by <%= topic.pseudo %></h3>
+          <p class="topic__header__createDate">
+            le <time><%= new Date(topic.created_at).toLocaleDateString() %></time>
+          </p>
+        </header>
+
+        <main class="topic__main">
+          <h2 class="topic__main__title"><a href="/topics/<%= currentCategory.name %>/<%= topic.id %>"><%=topic.title%></a></h2>
+          <p class="topic__main__description"><%= topic.topic_description %></>
+        </main>
+
+        <footer class="topic__footer">
+          <div class="topic__footer__title">Comments</div>
+          <div class="topic__footer__nbMessages"><%= topic.nb_message %></div>
+        </footer>
+      </article>
+      <% } %>
     </div>
 
     <!-- ici débute le formulaire -->
@@ -34,6 +54,7 @@
       placeholder="title of your topic..."
    />
 
+
       <div class="topic__form__editorContainer">
         <div id="editor"></div>
       </div>
@@ -49,19 +70,19 @@
     </form>
     <% } %>
 
-    <!-- FIN FORMULAIRE on ferme topic__main ici dessous !-->
+    <!-- FIN FORMULAIRE on ferme topic__container ici dessous !-->
   </div>
-  <!-- On ferme categoryPage__main__container ici dessous !-->
 </div>
 
 <%- include("partials/footer.ejs") %>
 
 <!-- *********************************************************** -->
-<!-- *********** TEMPLATE TOPIC ******************************** -->
+<!-- ***************** TEMPLATES ******************************* -->
 <!-- *********************************************************** -->
 
-<template id="topicTemplate">
+<template>
 
+  <a href="" class="topicMessagesHref">
     <article class="topic">
       <header class="topic__header">
         <!-- Mettre une photo et nom auteur -->
@@ -71,24 +92,17 @@
           le <time><span class="topicCreatedAt"></span></time>
         </p>
       </header>
-      
+
       <main class="topic__main">
-        <a href="" class="topicMessagesHref">
-            <h2 class="topic__main__title"></h2>
-        </a>
-        <div class="topic__main__description" id=""></p>
+        <h2 class="topic__main__title"></h2>
+        <p class="topic__main__description"><span class="topicDescription"></span></p>
       </main>
 
       <footer class="topic__footer">
         <div class="topic__footer__title">Comments</div>
         <div class="topic__footer__nbMessages"><span class="nbMessages"></span></div>
-        
-        <div class="topic__button__row">
-          <button class="topic__button__control edit__btn"><i class="far fa-edit"></i></button>
-          <button class="topic__button__control delete__btn"><i class="far fa-trash-alt"></i></button>
-        </div>
-
       </footer>
-  </article>
+    </article>
+  </a>
   
 </template>

@@ -1,7 +1,7 @@
 const forumDB = require('../model/forumDB');
 const forumView = require('../view/forumView');
 const messageFormController = require('./messageFormController');
-
+const fetch = require('node-fetch');
 const forumController = {
 
   /*
@@ -15,6 +15,7 @@ const forumController = {
     try {
       // getting all categories from DB, i specify the callback to treat the result of the query
       const results = await forumDB.getCategories();
+      // console.log(results);
 
       forumView.categories(response, {
         categories: results.rows,
@@ -24,12 +25,13 @@ const forumController = {
 
     } catch (error) {
 
+      console.log(error.stack);
       // error first implementation checking for server errors
       // response.status(500).res("getcategories error: " + error.stack);
       forumView.categories(response, {
         categories: [],
         session: request.session,
-        info: "getcategories error: " + error.stack,
+        info: "Aïe ça n'a pas fonctionné...",
       });
     }
 
@@ -58,7 +60,8 @@ const forumController = {
         return [categories, currentCategory];
       }
     } catch (error) {
-      return error
+      console.log(error.stack);
+      return false
     }
   },
 
@@ -74,7 +77,7 @@ const forumController = {
       let results = await forumDB.getTopicsByCategoryId(currentCategory.id);
       const topics = results.rows;
 
-      console.log(topics)
+      // console.log(topics)
       forumView.category(response, {
         topics: topics,
         categories: categories,
@@ -88,9 +91,9 @@ const forumController = {
         response.info = error.message;
         next();
       } else {
-        response.status(500).send(" getcategoryIdByName error: " + error.stack);
+        console.log(error.stack)
+        response.status(500).send(" getAllTopicsByCategoryId error: " + error.stack);
       }
-
     }
   },
 
@@ -98,38 +101,40 @@ const forumController = {
 
   getAllMessagesByTopicId: async (request, response, next) => {
 
+    const topicId = +request.params.topicId;
+    const catName = request.params.categoryName;
+
+    console.log('topicId : ', topicId);
     try {
-      const topicId = +request.params.topicId;
-      const catName = request.params.categoryName;
+
       // im expecting an integer in topicId, if anything else is passed, then 404
       if (isNaN(topicId)) {
         throw new Error(`404 -  no such topic exists with id = ${request.params.topicId}`);
       }
 
       //First i need to make sure the topic exists in this category
-      let results = await forumDB.checkTopicExistsInCategory(topicId, catName);
-      const currentTopic = results.rows[0];
-      //if the topic doesnt exist, we go 404
-      if (currentTopic === undefined) {
-        throw new Error(`404 -  no such topic exists with id = ${request.params.topicId}`);
-      }
+      const currentTopic = await forumDB.getTopicInCategory(topicId, catName);
 
-      //then i need to get all the messages from this topic
-      results = await forumDB.getAllMessagesByTopicId(topicId);
+      // ??? l'id est à '1', mais en interogation CLI c'est le bon ???
+      currentTopic.rows[0].id = topicId;
+
+      console.log('current topic : ', currentTopic.rows[0]);
+
+      if (currentTopic.rows.length === 0) {
+        response.status(500).redirect(`/categories/${catName}?msg_code=IC101`);
+        return
+      }
 
       // get the categories infos
       const [categories, currentCategory] = await forumController.getOneAndAllCategories(request);
 
-      const messages = results.rows;
       forumView.topic(response, {
-        topic: currentTopic,
-        messages,
+        topic: currentTopic.rows[0],
         categories,
         currentCategory,
         postUrl: request.url,
         session: request.session,
-        info: response.info,
-        jsFileUrl: "/js/topic.js"
+        info: response.info
       });
 
     } catch (error) {
@@ -137,7 +142,8 @@ const forumController = {
         response.info = error.message;
         next();
       } else {
-        response.status(500).send(" getcategoryIdByName error: " + error.stack);
+        console.log(error.stack);
+        response.status(500).redirect(`/categories/${catName}?msg_code=IC101`);
       }
     }
   },
@@ -199,8 +205,8 @@ const forumController = {
 
       } else {
 
+        console.log(error.stack);
         response.status(500).send(" 505 - createtopic error: " + error.stack);
-
       }
     }
   },

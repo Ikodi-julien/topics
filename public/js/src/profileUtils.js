@@ -1,15 +1,17 @@
-const profile = {
+export const profile = {
 
   showButtons: document.querySelectorAll('.profile__formContainer__titleRow'),
   closeButtons: document.querySelectorAll('.profile__form__close'),
 
   addEventListener: function() {
 
-    for (const button of profile.showButtons) {
-      button.addEventListener('click', profile.showForm)
-    };
-    for (const button of profile.closeButtons) {
-      button.addEventListener('click', profile.hideForm)
+    if (profile.showButtons.length) {
+      for (const button of profile.showButtons) {
+        button.addEventListener('click', profile.showForm)
+      };
+      for (const button of profile.closeButtons) {
+        button.addEventListener('click', profile.hideForm)
+      }
     }
   },
 
@@ -27,5 +29,3 @@ const profile = {
 
   },
 }
-
-document.addEventListener('DOMContentLoaded', profile.addEventListener)

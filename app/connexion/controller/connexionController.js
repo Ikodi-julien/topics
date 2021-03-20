@@ -60,7 +60,6 @@ const connexionController = {
               // ici mettre les valeurs d'identification dans la session
               request.session.data.logguedIn = true;
               request.session.data.userInfos = user.rows[0];
-
               response.redirect('/categories?msg_code=IC000');
 
             } else {

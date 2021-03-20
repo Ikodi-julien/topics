@@ -20,15 +20,18 @@
   z-index: 100;
 
   &__button {
-    position: absolute;
-    top: 0;
-    right: 0;
     padding: 10px;
-    border-radius: 0 0 0 20%;
-    background-color: color.$verylightblue;
-    color: color.$darkblue;
     cursor: pointer;
-    z-index: 101;
+
+    &__container {
+      position: absolute;
+      top: 0;
+      right: 0;
+      border-radius: 0 0 0 20%;
+      background-color: color.$verylightblue;
+      color: color.$darkblue;
+      z-index: 101;
+    }
   }
 
   &__info {

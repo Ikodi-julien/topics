@@ -19,7 +19,7 @@ const forumDB = {
 
   getCategories: () => {
     return new Promise((resolve, reject) => {
-      const query = `SELECT * from forum.category`;
+      const query = `SELECT * from public.categories`;
 
       client.query(query, forumDB.promiseCB(resolve, reject));
     })
@@ -28,23 +28,29 @@ const forumDB = {
   getCategoryIdByName: (categoryName) => {
     return new Promise((resolve, reject) => {
 
-      const query = `SELECT id from forum.category WHERE name=$1`;
+      const query = `SELECT id from public.categories WHERE name=$1`;
 
       client.query(query, [categoryName], forumDB.promiseCB(resolve, reject));
     });
   },
 
+  /**
+   * Gets Topics and its messages from a catégory id
+   * @param {int} categoryId 
+   * @returns 
+   */
   getTopicsByCategoryId: (categoryId) => {
     return new Promise((resolve, reject) => {
 
       const query = `
-      SELECT topic.*, users.pseudo, forum.message.topic_id, count(forum.message.topic_id) AS nb_message
-      FROM forum.topic
-      JOIN forum.users ON forum.topic.users_id = forum.users.id
-      LEFT JOIN forum.message ON forum.message.topic_id = forum.topic.id
-      WHERE category_id = $1
-      GROUP BY forum.topic.id, users.pseudo, forum.message.topic_id
-      ORDER BY topic.created_at ASC;
+      SELECT public.topics.*, public."users-permissions_user".username, public.messages.topic, count(public.messages.topic) AS nb_message
+      FROM public.topics
+      JOIN public."users-permissions_user"
+      ON public.topics."users_permissions_user" = public."users-permissions_user".id
+      LEFT JOIN public.messages ON public.messages.topic = public.topics.id
+      WHERE category = $1
+      GROUP BY public.topics.id, public."users-permissions_user".username, public.messages.topic
+      ORDER BY public.topics.created_at ASC;
       `;
 
       client.query(query, [+categoryId], forumDB.promiseCB(resolve, reject));
@@ -54,14 +60,19 @@ const forumDB = {
 
   // TEST ALL MESSAGES
   // this function query makes sure that a particular topic exists in this particular category 
-  checkTopicExistsInCategory: (topicId, catName) => {
+  getTopicInCategory: (topicId, catName) => {
     return new Promise((resolve, reject) => {
 
       const query = `
-      SELECT  *
-      FROM forum.topic  JOIN forum.category ON forum.topic.category_id=category.id
-                        JOIN forum.users ON forum.topic.users_id=forum.users.id
-      WHERE forum.category.name=$1 AND forum.topic.id=$2 ORDER BY topic.created_at ASC`;
+      SELECT t.id, t.title, t.category, t.topic_content, t.created_at, u.username
+      FROM public.topics as t
+      JOIN public.categories as c
+      ON t.category=c.id
+      LEFT JOIN public."users-permissions_user" as u
+      ON t.users_permissions_user=u.id
+      WHERE c.name=$1 
+      AND t.id=$2;
+      `;
 
       client.query(query, [catName, +topicId], forumDB.promiseCB(resolve, reject));
     });
@@ -70,8 +81,12 @@ const forumDB = {
   getAllMessagesByTopicId: (topicId) => {
     return new Promise((resolve, reject) => {
 
-      const query =
-        `SELECT message.*, users.pseudo FROM forum.message JOIN forum.users ON message.users_id=users.id WHERE topic_id=$1 ORDER BY message.created_at ASC`;
+      const query = `
+        SELECT public.messages.*, public."users-permissions_user".username
+        FROM public.messages
+        JOIN public."users-permissions_user" ON messages.users_permissions_user=public."users-permissions_user".id
+        WHERE messages.topic=$1 ORDER BY messages.created_at ASC;
+        `;
 
       client.query(query, [+topicId], forumDB.promiseCB(resolve, reject));
     });
@@ -84,7 +99,7 @@ const forumDB = {
   createNewTopic: (newTopic) => {
     return new Promise((resolve, reject) => {
 
-      const query = `INSERT INTO forum.topic (title, topic_description, users_id, category_id) VALUES
+      const query = `INSERT INTO public.topics (title, topic_description, "users_permissions_user", category) VALUES
         ($1, $2, $3, $4)`;
       client.query(query, [newTopic.title, newTopic.topicDesc, newTopic.users_id, newTopic.categoryId], forumDB
         .promiseCB(resolve, reject));
@@ -94,7 +109,7 @@ const forumDB = {
 
   createNewMessage: (newMessage) => {
     return new Promise((resolve, reject) => {
-      const query = `INSERT INTO forum.message (users_id, message_content, topic_id) VALUES
+      const query = `INSERT INTO public.messages ("users_permissions_user", message_content, topic) VALUES
           ($1, $2, $3)`;
       client.query(query, [newMessage.users_id, newMessage.messageContent, newMessage.topicId], forumDB
         .promiseCB(resolve, reject));
@@ -109,7 +124,7 @@ const forumDB = {
     return new Promise((resolve, reject) => {
 
       const preparedQuery = {
-        text: `DELETE FROM "forum"."message" WHERE id=$1 AND users_id=$2;`,
+        text: `DELETE FROM public.messages WHERE id=$1 AND public."users-permissions_user"=$2;`,
 
         values: [objParams.messageId, objParams.users_id]
       }
@@ -125,10 +140,9 @@ const forumDB = {
     return new Promise((resolve, reject) => {
 
       const preparedQuery = {
-        text: ` UPDATE "forum"."message"
-                  SET "message_content" = $1, 
-                      "modified_at" = CURRENT_TIMESTAMP
-                  WHERE id=$2 AND users_id=$3;
+        text: ` UPDATE public.messages
+                  SET "message_content" = $1
+                  WHERE id=$2 AND public."users-permissions_user"=$3;
         `,
         values: [objParams.message, objParams.messageId, objParams.users_id]
       }

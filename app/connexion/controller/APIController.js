@@ -64,6 +64,7 @@ const APIController = {
 
         request.session.data.logguedIn = true;
         request.session.data.userInfos = res.rows[0];
+        console.log(res.rows[0]);
 
         response.redirect('/categories?msg_code=IC000');
 

@@ -1,21 +1,24 @@
 <%- include("partials/header.ejs") %>
 
 <div class="messagesPage__topicContainer">
-
+  <span id="catId" style="display:none;"><%= currentCategory.id %></span>
+  <span id="topicId" style="display:none;"><%= topic.id %></span>
+  <span id="topicContent" style="display:none;"><%= JSON.stringify(topic.topic_content.ops)%></span>
+  <!-- style="display:none;" -->
   <h2 class="topic__title" ><%= topic.title %> </h2>
   <!-- description of the thread is set as the first message -->
   <article class="topic message__topic">
     <header class="topic__header">
       <!-- Mettre une photo et nom auteur -->
       <img src="/assets/default_user.png" alt="avatar">
-      <h3 class="topic__header__author">by <%= topic.pseudo %></h3>
+      <h3 class="topic__header__author">by <%= topic.username %></h3>
       <p class="topic__header__createDate">
         le <time><%= new Date(topic.created_at).toLocaleDateString() %></time>
       </p>
     </header>
 
     <main class="topic__main message__topic__main ">
-      <p class="message__topic__main__description"><%= topic.topic_description %></>
+      <p class="message__topic__main__description" id="mainTopicEditor"></p>
     </main>
 
   </article>
@@ -27,9 +30,8 @@
 
   <%- include("partials/categoriesAside") %>
 
-
   <!-- ----------------------------------------------- -->
-  <div class="messages__main">
+  <div class="messages__main --messagesMainSmaller">
 
     <div class="messages__container">
 
@@ -50,82 +52,11 @@
 
 
         <!-- --------------------------------------------- -->
-        <!-- We loop through all the messages to display them -->
+        <!-- here insert messages from API -->
         <!-- --------------------------------------------- -->
 
-        <% for (message of messages) { %>
-
-
-        <article class="message">
-
-
-          <header class="message__header">
-
-            <img src="/assets/default_user.png" alt="avatar">
-            <h3 class="message__header__author"><%= message.pseudo %></h3>
-
-            <p class="message__header__createDate">
-              le
-              <time><%= new Date(message.created_at).toLocaleDateString() %> - <%=new Date(message.created_at).toLocaleTimeString()%></time>
-            </p>
-
-          </header>
-
-
-
-          <% if (session.data.logguedIn && message.users_id === session.data.userInfos.id) { %>
-          <!-- user can access the edit form only if he is connected and owns the message -->
-
-          <section class="message__main --topicHiddenForm">
-
-            <form action="<%= postUrl + '/edit' %>" method="POST" class="modMessage__form">
-
-              <textarea
-          name="modMessage"
-          class="message__textArea"
-          > <%= message.message_content %>
-        </textarea>
-
-              <input type="hidden" name="modMessageId" value="<%= message.id %> ">
-              <button class="message__boutton__control" type="submit">Modifier</button>
-
-            </form>
-          </section>
-          <% } %>
-
-
-
-          <section class="message__main">
-            <p class="topic__main__description">
-              <%= message.message_content %>
-            </p>
-          </section>
-
-
-          <footer class="message__footer --messageFooter">
-
-            <!-- user can access this controls only if he is connected and owns the message -->
-
-            <% if (session.data.logguedIn && message.users_id === session.data.userInfos.id) { %>
-            <button class="message__boutton__control"><i class="far fa-edit"></i></button>
-
-            <!-- hidden form to delete the post-->
-            <form action="<%= postUrl + '/delete' %>" method="POST">
-              <input type="hidden" id="deleteMessageId" name="deleteMessageId" value="<%= message.id %> ">
-              <button class="message__boutton__control" type="submit"><i class="far fa-trash-alt"></i></button>
-            </form>
-
-            <% } %>
-
-          </footer>
-
-
-        </article>
-
-        <% } %>
-
-
       </div>
+
       <!-- form to post messages-->
       <% if (session.data.logguedIn) { %>
 
@@ -134,7 +65,7 @@
 
       <% session.data.createError = null;
             } %>
-      <form method="post" action="<%= postUrl + '/post' %>" id="form" class="topic__form">
+      <form method="post" action="<%= postUrl + '/post' %>" id="form" class="message__form">
 
         <div class="topic__form__editorContainer">
           <div id="editor"></div>
@@ -152,4 +83,42 @@
 
   </div>
 </div>
-<%- include("partials/footer.ejs", { jsFileUrl }) %>
+<%- include("partials/footer.ejs") %>
+
+<!-- ************************************* -->
+<!-- ************ MESSAGE TEMPLATE ******* -->
+<!-- ************************************* -->
+
+<template id="messageTemplate">
+  <article class="message">
+
+    <header class="message__header">
+
+      <img src="/assets/default_user.png" alt="avatar">
+      <h3 class="message__header__author">???</h3>
+
+      <p class="message__header__createDate">
+        le 
+        <time id="messageCreatedAt">???</time>
+      </p>
+
+    </header>
+
+    <section class="message__main">
+      <p class="message__main__description">
+        ???
+      </p>
+    </section>
+
+    <footer class="message__footer --messageFooter">
+
+      <!-- user can access this controls only if he is connected and owns the message -->
+
+      <button class="message__button__control edit__btn"><i class="far fa-edit"></i></button>
+      <button class="message__button__control delete__btn"><i class="far fa-trash-alt"></i></button>
+
+    </footer>
+
+  </article>
+
+</template>
