@@ -11,13 +11,12 @@ const mainController = {
    */
   checkSession: function(request, response, next) {
 
-    if (!request.session.data) {
-      request.session.data = {
-        logguedIn: false,
-        userInfos: null
+    if (!request.session.user) {
+      request.session.user = {
+        id: false,
+        message: null
       }
-
-      response.locals = request.session.data;
+      request.session.message = null
     }
 
     next();
@@ -25,9 +24,9 @@ const mainController = {
 
   sessionDisconnect: (request, response, next) => {
 
-    request.session.data = {
-      logguedIn: false,
-      userInfos: null
+    request.session.user = {
+      id: false,
+      message: null
     };
 
     response.redirect('/');

@@ -29,7 +29,7 @@
 
 
           <ul class="header__nav__links">
-            <% if (!session.data.logguedIn) {%>
+            <% if (!session.user.id) {%>
 
             <li class="header__nav__loginButton"><a href="/connexion/stdLogin" >
             Sign/in
@@ -37,7 +37,7 @@
 
             <% } %>
 
-            <% if (session.data.logguedIn) { %>
+            <% if (session.user.id) { %>
 
             <li class="header__nav__loginButton"><a href="/myProfile">
             Profile</a></li>

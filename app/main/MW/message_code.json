@@ -33,5 +33,7 @@
   "FC000": "Erreur, lors de la requête à la base de données...",
   "FC001": "Erreur, dans bcrypt.compare, ça craint...",
   "FC010": "Erreur, dans bcrypt.hash, ça craint...",
-  "FC011": "Erreur, lors de l'envoi de l'email contenant le nouveau mot de passe, ça craint..."
+  "FC011": "Erreur, lors de l'envoi de l'email contenant le nouveau mot de passe, ça craint...",
+
+  "IM000": "Ok, déconnecté."
 }

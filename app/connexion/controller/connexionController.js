@@ -3,7 +3,7 @@ const connexionDB = require('../model/connexionDB');
 const bcrypt = require('bcrypt');
 const generatePassword = require('generate-password');
 const nodemailer = require('./../MW/nodemailer');
-
+const fetch = require('node-fetch');
 const { githubURL } = require('../MW/githubTools');
 const { url } = require('../MW/googleTools');
 
@@ -29,47 +29,47 @@ const connexionController = {
    */
   stdLoginControl: (request, response) => {
     const formEmail = request.body.email;
+    const formPassword = request.body.password;
 
-    // Ici on récupère les données user en BDD.
-    connexionDB.getUserByEmail(formEmail, (err, user) => {
+    // On prépare la requête API pour un token d'identité
+    const body = JSON.stringify({
+      identifier: formEmail,
+      password: formPassword
+    })
 
-      if (err) {
+    console.log(body);
 
-        console.log('erreur dans connexionDB.getUserByEmail :', err)
-        response.redirect('/connexion/stdLogin?msg_code=FC000');
+    // Ici requête d'identification à l'API
+    let token;
 
-      } else {
+    fetch('http://localhost:1337/auth/local', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body
+      })
+      .then(res => res.json())
+      .then(json => {
 
-        // On continue si DBUser existe
-        if (!user.rowCount) {
+        if (typeof json.jwt !== 'undefined') {
+          console.log('user :', json);
 
-          response.redirect('/connexion/stdLogin?msg_code=IC110')
+          // ici mettre les valeurs d'identification dans la session
+          request.session.user = json.user;
+          response.redirect('/categories?msg_code=IC000');
 
         } else {
+          console.log('nok : ', json.message[0].messages[0].message);
 
-          // https://www.npmjs.com/package/bcrypt
-          bcrypt.compare(request.body.password, user.rows[0].password, (err, same) => {
-
-            if (err) {
-
-              console.log('erreur dans bcrypt hash :', err)
-              response.redirect('/connexion/stdLogin?msg_code=FC001')
-
-            } else if (same) {
-
-              // ici mettre les valeurs d'identification dans la session
-              request.session.data.logguedIn = true;
-              request.session.data.userInfos = user.rows[0];
-              response.redirect('/categories?msg_code=IC000');
-
-            } else {
-
-              response.redirect('/connexion/stdLogin?msg_code=IC1001')
-            }
-          });
+          response.redirect('/connexion/stdLogin?msg_code=IC1001')
         }
-      }
-    })
+
+      }).catch(error => {
+        console.log(error);
+      });
+
   },
 
   /**

@@ -6,29 +6,25 @@
 
 <div class="infouser" id="infouser">
 
-  <% if (typeof info !== 'undefined') {%>
+  <% if (typeof session.user.message !== 'undefined') {%>
 
   <p class="infouser__info" id="infoMessage">
-    <%= info %>
+    <%= session.user.message %>
   </p>
   <% } %>
 
-  <% if (session.data.userInfos !== null) { %>
+  <% if (session.user.id) { %>
 
   <p class="infouser__item">
-    id : <span id="infoUserId"><%= session.data.userInfos.id %></span>
+    id : <span id="infoUserId"><%= session.user.id %></span>
   </p>
 
   <p class="infouser__item">
-    Loggued : <%= session.data.logguedIn %>
+    Pseudo : <%= session.user.username %>
   </p>
 
   <p class="infouser__item">
-    Pseudo : <%= session.data.userInfos.username %>
-  </p>
-
-  <p class="infouser__item">
-    Status : <%= session.data.userInfos.role_string %>
+    Status : <%= session.user.role.name %>
   </p>
 
   <% } else { %>
