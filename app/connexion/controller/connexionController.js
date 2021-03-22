@@ -3,7 +3,7 @@ const connexionDB = require('../model/connexionDB');
 const bcrypt = require('bcrypt');
 const generatePassword = require('generate-password');
 const nodemailer = require('./../MW/nodemailer');
-const strapi = require('../../strapi/fetchStrapi');
+const strapi = require('../../strapi/strapi');
 const { githubURL } = require('../MW/githubTools');
 const { url } = require('../MW/googleTools');
 
@@ -53,7 +53,7 @@ const connexionController = {
 
         // ici mettre les valeurs d'identification dans la session
         request.session.user = dataUser.user;
-        request.session.token = dataUser.jwt;
+        response.cookie('token', dataUser.jwt);
         request.session.user.message = 'Ok connecté !';
 
         response.redirect('/categories?msg_code=IC000');

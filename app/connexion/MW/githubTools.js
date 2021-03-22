@@ -35,7 +35,6 @@ module.exports = {
   getUserFromToken: async (accessToken) => {
 
     try {
-
       // 2. Avec le token récupéré on fait maintenant une nouvelle demande
       // à l'API github pour récupérer les infos publiques du user
       const user = await axios({

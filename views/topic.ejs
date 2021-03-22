@@ -35,21 +35,7 @@
 
     <div class="messages__container">
 
-      <% if (session.data.deleteError) { %>
-      <div style="color: red;"><%= session.data.deleteError %></div>
-
-      <% session.data.deleteError = null;
-      } %>
-
-      <% if (session.data.editError) { %>
-      <div style="color: red;"><%= session.data.editError %></div>
-
-      <% session.data.editError = null;
-      } %>
-
-
       <div id="message-list" class="message__list">
-
 
         <!-- --------------------------------------------- -->
         <!-- here insert messages from API -->
@@ -58,13 +44,8 @@
       </div>
 
       <!-- form to post messages-->
-      <% if (session.data.logguedIn) { %>
+      <% if (session.user.token !== '') { %>
 
-      <% if (session.data.createError) { %>
-      <div style="color: red;"><%= session.data.createError %></div>
-
-      <% session.data.createError = null;
-            } %>
       <form method="post" action="<%= postUrl + '/post' %>" id="form" class="message__form">
 
         <div class="topic__form__editorContainer">

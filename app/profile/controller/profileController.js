@@ -10,15 +10,14 @@ const profileController = {
   getProfile: (request, response) => {
 
     // Test si la variable userInfos est null ou non
-    if (request.session.data.userInfos !== null) {
-      response.info = `Bienvenue ${request.session.data.userInfos.pseudo}!`;
+    if (request.session.user.token !== "") {
+      request.session.message = `Bienvenue ${request.session.user.username}!`;
       profileViews.view(request, response);
 
     } else {
-      response.info = 'Veuillez vous identifier pour accéder à cette page.';
+      request.session.user.message = 'Veuillez vous identifier pour accéder à cette page.';
       response.redirect('/connexion/stdLogin');
     }
-
   },
 
   /*-------------- ROUTE SELECTOR ------------*/

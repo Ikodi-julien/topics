@@ -5,10 +5,12 @@ export const topicPageUtils = {
 
   /**
    * Create an add topic elements in DOM
+   * if topic comes from a form, topic.id and 
    * @param {Object} topic - Un des topics récup avec la catégorie
    */
   createTopic: async (topic) => {
 
+    // console.log(topic);
     const errors = [];
 
     try {
@@ -47,9 +49,9 @@ export const topicPageUtils = {
 
       // Nom de l'auteur, même problème que la catégorie
       let author;
-      if (typeof topic.users_permissions_user === "number") { // On doit récup le nom de la cat
+      if (typeof topic.author === "number") { // On doit récup le nom de la cat
 
-        const resAuthor = await fetch(`http://localhost:1337/users/${topic.users_permissions_user}`)
+        const resAuthor = await fetch(`http://localhost:1337/users/${topic.author}`)
 
         if (!resAuthor.ok) {
           errors.push({ resAuthor: resAuthor.statusText });
@@ -58,15 +60,17 @@ export const topicPageUtils = {
         } else {
 
           const authorJSON = await resAuthor.json();
+          // console.log('authorJSON : ', authorJSON);
           author = authorJSON.username;
         }
 
       } else {
-        author = topic.users_permissions_user;
+        author = topic.author.username;
       }
 
-      node.querySelector('.topicAuthor').textContent = author.username;
+      node.querySelector('.topicAuthor').textContent = author;
 
+      // console.log('author', author);
       // Date de création
       node.querySelector('.topicCreatedAt').textContent = new Date(topic.created_at).toLocaleDateString();
 
@@ -155,9 +159,15 @@ export const topicPageUtils = {
 
     const topic = event.target.closest('.topic');
 
+    // Récupérer le token laissé au moment de la connexion
+    const authorization = `Bearer ${topicPageUtils.getCookieByName('token')}`;
+
     try {
       const response = await fetch(`http://localhost:1337/topics/${topic.dataset.id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          "Authorization": authorization
+        }
       })
 
       if (response.ok) {
@@ -199,7 +209,7 @@ export const topicPageUtils = {
 
     // Le rendre editable
     quill.enable();
-    console.log(Quill.find(editor) === quill); // Should be true
+    // console.log(Quill.find(editor) === quill); // Should be true
 
     // Ajouter un bouton valider et un quitter
     const topicBtnRow = event.target.closest('.topic__button__row');
@@ -238,5 +248,19 @@ export const topicPageUtils = {
 
     topicBtnRow.appendChild(quitBtn);
     topicBtnRow.appendChild(validBtn);
+  },
+
+  /**
+   * Gets a cookie value from his name
+   * @param {String} name 
+   * @returns string
+   */
+  getCookieByName: (name) => {
+
+    return document.cookie
+      .split('; ')
+      .find(cookie => cookie.startsWith(`${name}=`))
+      .split('=')[1];
+
   }
 }

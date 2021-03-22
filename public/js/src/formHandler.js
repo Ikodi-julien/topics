@@ -14,9 +14,6 @@ export const formHandler = {
 
   addEventListener: () => {
 
-    console.log(typeof formHandler.topicForm);
-    console.log(typeof formHandler.messageForm);
-
     if (typeof formHandler.topicForm !== 'undefined') {
       formHandler.topicForm.addEventListener('submit', formHandler.postTopic);
     }
@@ -34,11 +31,29 @@ export const formHandler = {
     const url = form.dataset.action;
     const topicTitle = form.querySelector('input[name="topic__title"]').value;
     const catId = document.querySelector('#catId').textContent;
+    const catName = document.querySelector('.categories__category__title').textContent.toLowerCase();
     const userId = document.querySelector('#infoUserId').textContent;
 
     // Récupération du contenu html du champ de saisie
     const quillContent = quill.newQuill.getContents();
 
+    // Vérifier le contenu non-vide des champs
+    if (
+      topicTitle === '' ||
+      catName === '' ||
+      quillContent === '' ||
+      userId === '' ||
+      catId === ''
+    ) {
+
+      alert("Il manque des infos dans un ou des champs de saisie");
+      return
+    }
+
+    // Récupérer le token laissé au moment de la connexion
+    const authorization = `Bearer ${topicPageUtils.getCookieByName('token')}`;
+
+    // Préparer l'envoi du formulaire
     const body = JSON.stringify({
 
       title: topicTitle,
@@ -46,13 +61,14 @@ export const formHandler = {
       category: catId,
       users_permissions_user: userId
     })
-    // console.log(body);
+    console.log(body);
 
     try {
       const response = await fetch(`http://localhost:1337${url}`, {
         method: 'POST',
         headers: {
-          "content-type": "application/json"
+          "content-type": "application/json",
+          "Authorization": authorization
         },
         body
       });
@@ -66,8 +82,12 @@ export const formHandler = {
           form.querySelector('input[name="topic__title"]').value = '';
           quill.newQuill.setContents('');
         }
+      } else if (response.statusText === 'Forbidden') {
+        alert("Désolé, cette action n'est pas autorisée...")
+        return
+
       } else {
-        console.log(response.statusText);
+        console.log(response);
       }
 
     } catch (error) {
@@ -95,11 +115,15 @@ export const formHandler = {
     })
     console.log(body);
 
+    // Récupérer le token laissé au moment de la connexion
+    const authorization = `Bearer ${topicPageUtils.getCookieByName('token')}`;
+
     try {
       const response = await fetch(`http://localhost:1337/messages`, {
         method: 'POST',
         headers: {
-          "content-type": "application/json"
+          "content-type": "application/json",
+          "Authorization": authorization
         },
         body
       });
@@ -140,11 +164,15 @@ export const formHandler = {
     })
     console.log(body);
 
+    // Récupérer le token laissé au moment de la connexion
+    const authorization = `Bearer ${topicPageUtils.getCookieByName('token')}`;
+
     try {
       const response = await fetch(`http://localhost:1337/messages/${messageId}`, {
         method: 'PUT',
         headers: {
-          "content-type": "application/json"
+          "content-type": "application/json",
+          "Authorization": authorization
         },
         body
       });
@@ -178,11 +206,15 @@ export const formHandler = {
     })
     console.log(body);
 
+    // Récupérer le token laissé au moment de la connexion
+    const authorization = `Bearer ${topicPageUtils.getCookieByName('token')}`;
+
     try {
       const response = await fetch(`http://localhost:1337/topics/${topicId}`, {
         method: 'PUT',
         headers: {
-          "content-type": "application/json"
+          "content-type": "application/json",
+          "Authorization": authorization
         },
         body
       });

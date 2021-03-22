@@ -5,7 +5,15 @@ Reprise du projet 'Forum' des Quillers en autonomie, poursuite de l'intégration
 
 ### V1 : Le ?
 - FRONT :
-  - Intégration formulaire
+  - Mise en forme du contenu des formulaires avec quill.js,
+  - Branchement sur API, les topics et messages sont fetch par le navigateur,
+  - Fin intégration page messages d'un topic,
+
+-BACK :
+  - Base de données postgreSQL,
+  - API réalisée avec le CMS Strapi,
+  - Les vues sont servies par node.js + générateur de vues ejs,
+  - L'app node.js interroge l'API (localhost), pas de requête à la base pg.
 
 ### V0 : état le 15/03/2021
 

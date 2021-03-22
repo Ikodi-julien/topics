@@ -12,7 +12,7 @@
 
       <div class="profile__formContainer__titleRow">
         <div class="profile__formContainer__titleRow__name">Pseudo</div>
-        <div class="profile__formContainer__titleRow__actual"><%= userInfos.pseudo %></div>
+        <div class="profile__formContainer__titleRow__actual"><%= session.user.username %></div>
 
         <div class="profile__formContainer__titleRow__modify">
           <i class="fas fa-pen"></i>Modifier
@@ -30,7 +30,7 @@
           name="pseudo"
           class="profile__form__item"
           id="pseudo"
-          placeholder="<%= userInfos.pseudo %>"
+          placeholder="<%= session.user.username %>"
         />
 
       </div>
@@ -89,7 +89,7 @@
 
       <div class="profile__formContainer__titleRow">
         <div class="profile__formContainer__titleRow__name">Email</div>
-        <div class="profile__formContainer__titleRow__actual"><%= userInfos.email %></div>
+        <div class="profile__formContainer__titleRow__actual"><%= session.user.email %></div>
         <div class="profile__formContainer__titleRow__modify">
           <i class="fas fa-pen"></i>Modifier
         </div>
@@ -104,7 +104,7 @@
         name="email1"
         class="profile__form__item"
         id="email1"
-        placeholder="<%= userInfos.email %>"
+        placeholder="<%= session.user.email %>"
       />
 
       </div>
