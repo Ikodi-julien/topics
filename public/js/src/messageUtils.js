@@ -1,4 +1,5 @@
 import { formHandler } from './formHandler.js';
+import { getCookie } from './getCookie.js';
 
 export const messagePageUtils = {
 
@@ -66,13 +67,27 @@ export const messagePageUtils = {
       // Pour repérer l'éditeur on lui donne en param l'id du message
       node.querySelector('.message__main__description').id = `editor${message.id}`;
 
-      // Ajout listener delete
-      const deleteBtn = node.querySelector('.delete__btn');
-      deleteBtn.addEventListener('click', messagePageUtils.deleteMessage);
+      /*********** BUTTONS IF CONNECTED ***********/
 
-      // Ajout listener edit
-      const editBtn = node.querySelector('.edit__btn');
-      editBtn.addEventListener('click', messagePageUtils.updateMessage);
+      if (getCookie.get('token')) {
+
+        // Ajouter les boutons edit et delete dans le footer
+        const footer = node.querySelector('.message__footer');
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('message__button__control', 'delete__btn');
+        deleteBtn.innerHTML = '<i class="far fa-trash-alt"></i>';
+        deleteBtn.addEventListener('click', messagePageUtils.deleteMessage);
+
+        const editBtn = document.createElement('button');
+        editBtn.classList.add('message__button__control', 'edit__btn');
+        editBtn.innerHTML = '<i class="far fa-edit"></i>';
+        editBtn.addEventListener('click', messagePageUtils.updateMessage);
+
+        footer.appendChild(deleteBtn);
+        footer.appendChild(editBtn);
+      }
+      /********************************************/
 
       // ADD elt in DOM
       document.querySelector('.message__list').appendChild(node);
@@ -121,9 +136,7 @@ export const messagePageUtils = {
           const topic = await data.json();
           // On affiche un 'article' pour chaque message
           for (const message of topic.messages) {
-
-            console.log(message.message_content);
-
+            // console.log(message.message_content);
             messagePageUtils.createMessage(message);
           }
         } else {

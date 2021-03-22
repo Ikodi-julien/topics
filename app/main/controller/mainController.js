@@ -1,6 +1,5 @@
 const mainViews = require('../views/mainViews');
 
-
 const mainController = {
 
   // code associé à la route '/'
@@ -17,12 +16,14 @@ const mainController = {
    */
   checkSession: function(request, response, next) {
 
+
     if (!request.session.user) {
       request.session.user = {
         id: -1,
         token: '',
         message: ''
       }
+
     }
 
     next();

@@ -32,6 +32,7 @@ export const connexionUtils = {
     connexionUtils.quitLostPass.addEventListener('click', () => {
       connexionUtils.lostPassModale.classList.toggle('--connexion__show');
     })
+
   },
 
   addHomeButton: () => {
@@ -48,5 +49,6 @@ export const connexionUtils = {
     homeButton.addEventListener('click', () => {
       location.href = '/';
     })
-  }
+  },
+
 }

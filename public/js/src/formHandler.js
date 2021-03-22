@@ -1,7 +1,7 @@
 import { messagePageUtils } from './messageUtils.js';
 import { quill } from './quill.js';
 import { topicPageUtils } from './topicUtils.js';
-
+import { getCookie } from './getCookie.js';
 
 export const formHandler = {
 
@@ -22,6 +22,10 @@ export const formHandler = {
     }
   },
 
+  /**
+   * POST a new Topic
+   * @param {Event} event 
+   */
   postTopic: async (event) => {
 
     event.preventDefault();
@@ -51,7 +55,15 @@ export const formHandler = {
     }
 
     // Récupérer le token laissé au moment de la connexion
-    const authorization = `Bearer ${topicPageUtils.getCookieByName('token')}`;
+    const token = getCookie.get('token');
+
+    if (!token) {
+
+      alert("Créez un compte pour créer un topic...");
+      return
+    }
+
+    const authorization = `Bearer ${token}`;
 
     // Préparer l'envoi du formulaire
     const body = JSON.stringify({
@@ -95,6 +107,10 @@ export const formHandler = {
     }
   },
 
+  /**
+   * POST a new message 
+   * @param {Event} event 
+   */
   postMessage: async (event) => {
 
     event.preventDefault();
@@ -116,7 +132,15 @@ export const formHandler = {
     console.log(body);
 
     // Récupérer le token laissé au moment de la connexion
-    const authorization = `Bearer ${topicPageUtils.getCookieByName('token')}`;
+    const token = getCookie.get('token');
+
+    if (!token) {
+
+      alert("Créez un compte pour écrire un message...");
+      return
+    }
+
+    const authorization = `Bearer ${token}`;
 
     try {
       const response = await fetch(`http://localhost:1337/messages`, {
@@ -146,6 +170,11 @@ export const formHandler = {
     }
   },
 
+  /**
+   * Updates a message, owner of the message only
+   * @param {Event} event 
+   * @returns boolean
+   */
   putMessage: async (event) => {
 
     // Récupération de l'id du message :
@@ -165,7 +194,15 @@ export const formHandler = {
     console.log(body);
 
     // Récupérer le token laissé au moment de la connexion
-    const authorization = `Bearer ${topicPageUtils.getCookieByName('token')}`;
+    const token = getCookie.get('token');
+
+    if (!token) {
+
+      alert("Vous n'êtes pas l'auteur du message, désolé...");
+      return
+    }
+
+    const authorization = `Bearer ${token}`;
 
     try {
       const response = await fetch(`http://localhost:1337/messages/${messageId}`, {
@@ -188,6 +225,11 @@ export const formHandler = {
     }
   },
 
+  /**
+   * Updates a topic, only by the author of the topic.
+   * @param {Event} event 
+   * @returns 
+   */
   putTopic: async (event) => {
 
     // Récupération de l'id du topic :
@@ -204,10 +246,18 @@ export const formHandler = {
 
       topic_content: content,
     })
-    console.log(body);
+    // console.log(body);
 
     // Récupérer le token laissé au moment de la connexion
-    const authorization = `Bearer ${topicPageUtils.getCookieByName('token')}`;
+    const token = getCookie.get('token');
+
+    if (!token) {
+
+      alert("Vous n'êtes pas l'auteur de ce topic, désolé...");
+      return
+    }
+
+    const authorization = `Bearer ${token}`;
 
     try {
       const response = await fetch(`http://localhost:1337/topics/${topicId}`, {

@@ -9,6 +9,16 @@ import { hamMenu } from './hamburger.js';
 
 const app = {
 
+  disconnectButton: document.getElementById('topicsDisconnect'),
+
+  disconnect: () => {
+    console.log('disconnect');
+    // Supprime le cookie du navigateur
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    // La session sera réinitialisée à cette adresse
+    location.href = '/connexion/disconnect';
+  },
+
   init: () => {
     quill.makeForm();
     topicPageUtils.makeTopicList();
@@ -19,6 +29,10 @@ const app = {
     connexionUtils.init();
     formHandler.init();
     hamMenu.addEventListener();
+
+    if (app.disconnectButton !== null) {
+      app.disconnectButton.addEventListener('click', app.disconnect)
+    }
   }
 }
 

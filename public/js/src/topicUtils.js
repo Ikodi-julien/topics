@@ -1,5 +1,5 @@
 import { formHandler } from './formHandler.js';
-
+import { getCookie } from './getCookie.js';
 
 export const topicPageUtils = {
 
@@ -90,14 +90,27 @@ export const topicPageUtils = {
       // Pour repérer l'éditeur on lui donne en param l'id du topic
       node.querySelector('.topic__main__description').id = `editor${topic.id}`;
 
-      // Ajout listener delete
-      const deleteBtn = node.querySelector('.delete__btn');
-      deleteBtn.addEventListener('click', topicPageUtils.deleteTopic);
+      /*--- IF USER AUTHENTICATED ---*/
 
-      // Ajout listener edit
-      const editBtn = node.querySelector('.edit__btn');
-      editBtn.addEventListener('click', topicPageUtils.updateTopic);
+      if (getCookie.get('token')) {
 
+        // Ajouter les boutons edit et delete dans le footer
+        const footer = node.querySelector('.topic__footer .topic__button__row');
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.classList.add('topic__button__control', 'edit__btn');
+        deleteBtn.innerHTML = '<i class="far fa-trash-alt"></i>';
+        deleteBtn.addEventListener('click', topicPageUtils.deleteTopic);
+
+        const editBtn = document.createElement('button');
+        editBtn.classList.add('topic__button__control', 'delete__btn');
+        editBtn.innerHTML = '<i class="far fa-edit"></i>';
+        editBtn.addEventListener('click', topicPageUtils.updateTopic);
+
+        footer.appendChild(deleteBtn);
+        footer.appendChild(editBtn);
+      }
+      /*-------------------------------*/
       // ADD elt in DOM
       document.querySelector('.topics__container').appendChild(node);
 
@@ -159,10 +172,19 @@ export const topicPageUtils = {
 
     const topic = event.target.closest('.topic');
 
-    // Récupérer le token laissé au moment de la connexion
-    const authorization = `Bearer ${topicPageUtils.getCookieByName('token')}`;
-
     try {
+
+      // Récupérer le token laissé au moment de la connexion
+      const token = getCookie.get('token');
+
+      if (!token) {
+
+        alert("Vous n'avez pas les droits pour supprimer ce topic, désolé...");
+        return
+      }
+
+      const authorization = `Bearer ${token}`;
+
       const response = await fetch(`http://localhost:1337/topics/${topic.dataset.id}`, {
         method: 'DELETE',
         headers: {
@@ -248,19 +270,5 @@ export const topicPageUtils = {
 
     topicBtnRow.appendChild(quitBtn);
     topicBtnRow.appendChild(validBtn);
-  },
-
-  /**
-   * Gets a cookie value from his name
-   * @param {String} name 
-   * @returns string
-   */
-  getCookieByName: (name) => {
-
-    return document.cookie
-      .split('; ')
-      .find(cookie => cookie.startsWith(`${name}=`))
-      .split('=')[1];
-
   }
 }
