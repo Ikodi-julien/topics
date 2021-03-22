@@ -46,7 +46,7 @@ const connexionController = {
     try {
       // Demande connexion à l'API
       const dataUser = await strapi.logUser(body);
-      // console.log(dataUser.data[0].messages[0].message);
+      console.log(dataUser);
 
       if (typeof dataUser.jwt !== 'undefined') {
         // console.log('user :', dataUser);
@@ -125,10 +125,10 @@ const connexionController = {
     } else {
       // On connecte direct :
       // Demande connexion à l'API
-      connexionController.finalLoginCtrl({
+      connexionController.finalLoginCtrl(JSON.stringify({
         identifier: body.email,
         password: body.password
-      }, request, response);
+      }), request, response);
     }
   },
 

@@ -14,7 +14,7 @@ const app = {
   disconnect: () => {
     console.log('disconnect');
     // Supprime le cookie du navigateur
-    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "token=true; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     // La session sera réinitialisée à cette adresse
     location.href = '/connexion/disconnect';
   },

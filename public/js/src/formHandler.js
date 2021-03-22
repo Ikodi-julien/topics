@@ -71,7 +71,7 @@ export const formHandler = {
       title: topicTitle,
       topic_content: quillContent,
       category: catId,
-      users_permissions_user: userId
+      author: userId
     })
     console.log(body);
 
@@ -127,7 +127,7 @@ export const formHandler = {
 
       topic: topicId,
       message_content: quillContent,
-      users_permissions_user: userId
+      author: userId
     })
     console.log(body);
 
@@ -155,7 +155,7 @@ export const formHandler = {
       if (response.ok) {
 
         const message = await response.json();
-        // console.log(topic);
+        console.log(message);
         const isCreated = await messagePageUtils.createMessage(message)
 
         if (isCreated) {

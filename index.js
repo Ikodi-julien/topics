@@ -29,6 +29,7 @@ app.use(expressSession({
   secret: 'quillers',
   resave: false,
   saveUninitialized: false,
+  unset: 'destroy',
   cookie: {
     // maxAge: 1000 * 60 * 60 * 24 * 7,
     secure: false

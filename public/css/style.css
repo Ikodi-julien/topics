@@ -646,7 +646,7 @@
     padding: 60px 0;
     flex-direction: column;
     background-color: #eff8fa;
-    z-index: 2;
+    z-index: 3;
     transition: top 300ms;
   }
 }

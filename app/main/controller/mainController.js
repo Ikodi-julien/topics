@@ -31,12 +31,7 @@ const mainController = {
 
   sessionDisconnect: (request, response, next) => {
 
-    request.session.user = {
-      id: -1,
-      token: '',
-      message: ''
-    }
-
+    request.session = null;
     response.redirect('/');
   },
 }

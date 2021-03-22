@@ -22,24 +22,6 @@ const strapi = {
     };
   },
 
-  // getUser: async (body) => {
-  //   try {
-  //     const response = await fetch('http://localhost:1337/users', {
-  //       method: 'GET',
-  //       headers: {
-  //         'Accept': 'application/json',
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: body
-  //     })
-
-  //     return await response.json();
-
-  //   } catch (error) {
-  //     console.log(error);
-  //   };
-  // },
-
   /**
    * Register a new user in strapi API
    */

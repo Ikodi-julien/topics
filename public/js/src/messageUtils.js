@@ -3,19 +3,35 @@ import { getCookie } from './getCookie.js';
 
 export const messagePageUtils = {
 
-  populateTopic: () => {
+  populateTopic: async () => {
     // For messages page only, the topic.
     if (document.querySelectorAll('#mainTopicEditor').length) {
-      // Récup du contenu à afficher, vient du serveur
-      const content = document.getElementById('topicContent').innerText
+      try {
+        // Récup du contenu à afficher avec l'id du topic,
+        const topicId = document.getElementById('topicId').textContent;
+        const rawTopic = await fetch(`http://localhost:1337/topics/${topicId}`);
+        const topic = await rawTopic.json();
 
-      // On fait un quill pour garder la mise en forme
-      const quill = new Quill('#mainTopicEditor', {});
+        // On indique l'auteur
+        document.querySelector('.topic__header__author').textContent = topic.author.username;
 
-      // quill prend un objet json pour définir son contenu
-      const contentJson = JSON.parse(content);
-      quill.setContents(contentJson);
-      quill.disable();
+        // On indique la date de création
+        document.querySelector('.topic__header__createDate time').textContent = new Date(topic.created_at)
+          .toLocaleDateString();
+
+        // Le titre
+        document.querySelector('.topic__main__title').textContent = topic.title;
+
+        // On fait un quill pour garder la mise en forme
+        const quill = new Quill('#mainTopicEditor', {});
+
+        // quill prend un objet json pour définir son contenu
+        quill.setContents(topic.topic_content.ops);
+        quill.disable();
+
+      } catch (error) {
+        console.log(error);
+      }
     }
   },
 
@@ -25,6 +41,7 @@ export const messagePageUtils = {
    */
   createMessage: async (message) => {
 
+    console.log(message);
     /************ LES VARIABLES !!!!************/
     const errors = [];
     let author, catName;
@@ -35,15 +52,14 @@ export const messagePageUtils = {
     /************ POPULATE ************/
     // Clone du modèle
     const node = document.importNode(template.content, true);
-    // On positionne les infos dans le modèle
     // id du topic
     node.querySelector('.message').dataset.id = message.id;
 
     try {
       // Nom de l'auteur, même problème que la catégorie
-      if (typeof message.users_permissions_user === "number") {
+      if (typeof message.author === "number") {
 
-        const resAuthor = await fetch(`http://localhost:1337/users/${message.users_permissions_user}`)
+        const resAuthor = await fetch(`http://localhost:1337/users/${message.author}`)
 
         if (!resAuthor.ok) {
           errors.push({ resAuthor: resAuthor.statusText });
@@ -55,9 +71,10 @@ export const messagePageUtils = {
         }
 
       } else {
-        author = message.users_permissions_user;
+        author = message.author.username;
       }
 
+      console.log(author);
       node.querySelector('.message__header__author').textContent = author;
 
       // Date de création
@@ -154,8 +171,24 @@ export const messagePageUtils = {
     const message = event.target.closest('.message');
 
     try {
+
+      // Récupérer le token laissé au moment de la connexion
+      const token = getCookie.get('token');
+
+      if (!token) {
+
+        alert("Vous n'avez pas les droits pour supprimer ce topic, désolé...");
+        return
+      }
+
+      const authorization = `Bearer ${token}`;
+
+
       const response = await fetch(`http://localhost:1337/messages/${message.dataset.id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          "Authorization": authorization
+        }
       })
 
       if (response.ok) {
