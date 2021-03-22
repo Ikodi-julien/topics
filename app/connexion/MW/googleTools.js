@@ -50,13 +50,15 @@ const getGoogleAccountFromCode = async (code) => {
     const firstName = me.data.names[0].givenName;
     const lastName = me.data.names[0].familyName;
     const pseudo = `${firstName}-${lastName}`;
+    const email = me.data.emailAddresses[0].value;
+    const password = email.substring(3, 9) + '#topics!';
 
     return {
       pseudo,
       firstName,
       lastName,
-      hashedPass: `####`,
-      email: me.data.emailAddresses[0].value,
+      password,
+      email
     };
 
   } catch (error) {

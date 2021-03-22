@@ -8,15 +8,21 @@ const mainController = {
 
   /**
    * Set the session' infos
+   * 
+   * session.user : {
+   *                  id: -1,
+   *                  token: '',
+   *                  message: ''
+   *                },
    */
   checkSession: function(request, response, next) {
 
     if (!request.session.user) {
       request.session.user = {
-        id: false,
-        message: null
+        id: -1,
+        token: '',
+        message: ''
       }
-      request.session.message = null
     }
 
     next();
@@ -25,14 +31,13 @@ const mainController = {
   sessionDisconnect: (request, response, next) => {
 
     request.session.user = {
-      id: false,
-      message: null
-    };
+      id: -1,
+      token: '',
+      message: ''
+    }
 
     response.redirect('/');
   },
-
-
 }
 
 module.exports = mainController;

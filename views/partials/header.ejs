@@ -29,21 +29,19 @@
 
 
           <ul class="header__nav__links">
-            <% if (!session.user.id) {%>
-
-            <li class="header__nav__loginButton"><a href="/connexion/stdLogin" >
-            Sign/in
-        </a></li>
-
-            <% } %>
-
-            <% if (session.user.id) { %>
+            <% if (session.user.id > 0) {%>
 
             <li class="header__nav__loginButton"><a href="/myProfile">
             Profile</a></li>
             <li class="header__nav__loginButton"><a href="/connexion/disconnect">
             Sign/out</a></li>
 
+            <% } else { %>
+
+            <li class="header__nav__loginButton"><a href="/connexion/stdLogin" >
+              Sign/in
+              </a>
+            </li>
             <% } %>
 
           </ul>

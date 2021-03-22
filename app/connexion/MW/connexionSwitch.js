@@ -20,11 +20,11 @@ const connexionSwitch = {
 
     switch (view) {
       case 'stdLogin':
-        connexionController.stdLoginControl(request, response);
+        connexionController.formLoginControl(request, response);
         break;
 
       case 'createAccount':
-        connexionController.createAccountControl(request, response);
+        connexionController.formCreateAccountControl(request, response);
         break;
 
       case 'lostPass':

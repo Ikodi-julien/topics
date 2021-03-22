@@ -13,7 +13,7 @@
   </p>
   <% } %>
 
-  <% if (session.user.id) { %>
+  <% if (session.user.id > 0) { %>
 
   <p class="infouser__item">
     id : <span id="infoUserId"><%= session.user.id %></span>

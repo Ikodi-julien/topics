@@ -3,7 +3,7 @@ const connexionDB = require('../model/connexionDB');
 const bcrypt = require('bcrypt');
 const generatePassword = require('generate-password');
 const nodemailer = require('./../MW/nodemailer');
-const fetch = require('node-fetch');
+const strapi = require('../../strapi/fetchStrapi');
 const { githubURL } = require('../MW/githubTools');
 const { url } = require('../MW/googleTools');
 
@@ -27,132 +27,141 @@ const connexionController = {
   /**
    * Controls wether the user informations matches usersDatabase
    */
-  stdLoginControl: (request, response) => {
-    const formEmail = request.body.email;
-    const formPassword = request.body.password;
+  formLoginControl: async (request, response) => {
 
     // On prépare la requête API pour un token d'identité
     const body = JSON.stringify({
-      identifier: formEmail,
-      password: formPassword
+      identifier: request.body.email,
+      password: request.body.password
     })
 
-    console.log(body);
+    connexionController.finalLoginCtrl(body, request, response);
+  },
 
-    // Ici requête d'identification à l'API
-    let token;
+  /**
+   * Function for stdLogin, googlelogin, github login...
+   * @param {*} body 
+   */
+  finalLoginCtrl: async (body, request, response) => {
+    try {
+      // Demande connexion à l'API
+      const dataUser = await strapi.logUser(body);
+      // console.log(dataUser.data[0].messages[0].message);
 
-    fetch('http://localhost:1337/auth/local', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body
-      })
-      .then(res => res.json())
-      .then(json => {
+      if (typeof dataUser.jwt !== 'undefined') {
+        // console.log('user :', dataUser);
 
-        if (typeof json.jwt !== 'undefined') {
-          console.log('user :', json);
+        // ici mettre les valeurs d'identification dans la session
+        request.session.user = dataUser.user;
+        request.session.token = dataUser.jwt;
+        request.session.user.message = 'Ok connecté !';
 
-          // ici mettre les valeurs d'identification dans la session
-          request.session.user = json.user;
-          response.redirect('/categories?msg_code=IC000');
+        response.redirect('/categories?msg_code=IC000');
 
-        } else {
-          console.log('nok : ', json.message[0].messages[0].message);
+      } else {
+        request.session.user.message = dataUser.data[0].messages[0].message;
+        response.redirect('/connexion/stdLogin')
 
-          response.redirect('/connexion/stdLogin?msg_code=IC1001')
-        }
-
-      }).catch(error => {
-        console.log(error);
-      });
-
+      }
+    } catch (error) {
+      request.params.view = 'stdLogin';
+      request.session.user.message = error.stack;
+      console.log('finalLoginCtrl : ', error);
+      connexionViews.view(request, response)
+    }
   },
 
   /**
    * Controls if form's data are good enought to create an account...
    */
-  createAccountControl: (request, response) => {
+  formCreateAccountControl: async (request, response) => {
     // On récupère les données à contrôler :
-    const formFirstName = request.body.first_name;
-    const formLastName = request.body.last_name;
-    const formEmail = request.body.email;
-    const formPassword_1 = request.body.password_1;
-    const formPassword_2 = request.body.password_2;
-
-    // Ici on fixe la vue à afficher lors du render
-    request.params.pass = 'stdLogin';
+    const form = {
+      firstname: request.body.first_name,
+      lastname: request.body.last_name,
+      email: request.body.email,
+      password_1: request.body.password_1,
+      password_2: request.body.password_2
+    }
 
     // Check empty form
     if (
-      formFirstName === '' ||
-      formLastName === '' ||
-      formEmail === '' ||
-      formPassword_1 === ''
+      form.firstname === '' ||
+      form.lastname === '' ||
+      form.email === '' ||
+      form.password_1 === ''
     ) {
 
       response.redirect('/connexion/stdLogin?msg_code=IC1000');
+      return
+    }
+
+    if (form.password_1 !== form.password_2) { // Passwords check
+
+      response.redirect('/connexion/stdLogin?msg_code=IC111')
+      return
+    }
+
+    // Le formulaire est ok, on fait une demande de register à strapi
+    const body = {
+      username: form.firstname + '-' + form.lastname,
+      email: form.email,
+      password: form.password_1,
+      firstname: form.firstname,
+      lastname: form.lastname
+    }
+
+    const newUser = await strapi.registerUser(body);
+
+    // On gère les infos ou error
+    if (typeof newUser.error !== 'undefined' || typeof newUser.message !== 'undefined') {
+      // Ici on fixe la vue à afficher lors du render
+      request.params.view = 'stdLogin';
+      request.session.user.message = newUser.error || newUser.message;
+      console.log('newUser error : ', newUser.error);
+      console.log('newUser message : ', newUser.message);
+      connexionViews.view(request, response);
 
     } else {
-
-      if (formPassword_1 !== formPassword_2) { // Passwords check
-
-        response.redirect('/connexion/stdLogin?msg_code=IC111')
-
-      } else { // Check if Email exists in DB
-
-        connexionDB.getEmail(formEmail, (error, user) => {
-
-          if (error) {
-            console.log('error de la query getPseudo : ', error);
-            response.redirect('/connexion/stdLogin?msg_code=FC000')
-
-          } else {
-
-            if (!user.rowCount) { // If email doesn't exist
-
-              // Ici on hash le password avant le stockage en BDD
-              bcrypt.hash(formPassword_1, 10, (err, hash) => {
-
-                if (err) {
-                  console.log(err)
-                  response.redirect('/connexion/stdLogin?msg_code=FC010');
-
-                } else {
-
-                  const dataUser = {
-                    pseudo: `${formFirstName}-${formLastName}`,
-                    firstName: formFirstName,
-                    lastName: formLastName,
-                    email: formEmail,
-                    hashedPass: hash
-                  }
-                  // Ici function avec callback pour l'insertion du profil
-                  connexionDB.insertProfil(dataUser, (err, res) => {
-
-                    if (err) {
-                      console.log('error de la query insertProfil: ', err);
-                      response.redirect('/connexion/stdLogin?msg_code=FC000');
-
-                    } else {
-                      // TODO: Prévoir un envoi de mail pour confirmation de l'adresse mail
-                      response.redirect('/connexion/stdLogin?msg_code=IC001');
-                    }
-                  });
-                }
-              })
-            } else {
-              // le pseudo est déjà pris:
-              response.redirect('/connexion/stdLogin?msg_code=IC010');
-            }
-          }
-        })
-      }
+      // On connecte direct :
+      // Demande connexion à l'API
+      connexionController.finalLoginCtrl({
+        identifier: body.email,
+        password: body.password
+      }, request, response);
     }
   },
+
+
+  /**
+   * Controls if API's data are good enought to create an account...
+   */
+  APICreateAccountControl: async (dataAPI, request, response) => {
+    //on fait une demande de register à strapi
+    const body = {
+      username: dataAPI.pseudo,
+      email: dataAPI.email,
+      password: dataAPI.password,
+      firstname: dataAPI.firstName,
+      lastname: dataAPI.lastName
+    }
+
+    try {
+      const newUser = await strapi.registerUser(body);
+
+      // On gère les infos ou error
+      if (typeof newUser.error !== 'undefined' || typeof newUser.message !== 'undefined') {
+
+        return { message: newUser.error || newUser.message };
+
+      } else {
+        return newUser;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  },
+
 
   /**
    * Performs checkings over lost password request

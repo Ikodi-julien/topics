@@ -16,13 +16,7 @@
 
     <!-- ici débute le formulaire -->
 
-    <% if (session.data.logguedIn) { %>
-
-    <% if (session.data.createError) {%>
-    <div style="color: red;"><%= session.data.createError %></div>
-
-    <% session.data.createError
-   } %>
+    <% if (session.user.id > 0) { %>
 
     <form method="post" data-action="/topics" id="form" class="topic__form">
 

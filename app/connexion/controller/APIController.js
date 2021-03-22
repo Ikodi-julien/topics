@@ -1,6 +1,8 @@
 const googleTools = require('./../MW/googleTools');
 const githubTools = require('./../MW/githubTools');
 const connexionDB = require('./../model/connexionDB');
+const connexionController = require('../controller/connexionController');
+const connexionViews = require('../view/connexionViews');
 
 const APIController = {
 
@@ -12,16 +14,33 @@ const APIController = {
   google: async (request, response) => {
 
     try {
-      const dataUser = await googleTools.getGoogleAccountFromCode(request.query.code);
+      const dataGoogle = await googleTools.getGoogleAccountFromCode(request.query.code);
 
-      if (dataUser) {
+      if (dataGoogle) {
+        // Ici requête d'inscription
+        const newUser = await connexionController.APICreateAccountControl(dataGoogle);
 
-        APIController.manageDB(dataUser, request, response);
+        // Si reponse avec un message, on tente de se connecter
+        if (newUser.message) {
+
+          console.log('newUser.message', newUser.message);
+          const body = JSON.stringify({ identifier: dataGoogle.email, password: dataGoogle.password });
+          connexionController.finalLoginCtrl(body, request, response);
+          // ici après c'est finalLoginCtrl qui gère...
+
+        } else {
+          // c bon !
+          request.session.user = newUser.user;
+          console.log(newUser)
+          request.session.user.token = newUser.jwt;
+          request.session.user.message = 'Ok inscrit !';
+          response.redirect('/categories');
+        }
 
       } else {
-
         response.redirect('/connexion/stdLogin?msg_code=EC001');
       }
+
     } catch (error) {
       console.log(error)
       response.redirect('/connexion/stdLogin?msg_code=EC010');
@@ -35,25 +54,43 @@ const APIController = {
 
       const accessToken = await githubTools.getAccessTokenFromGithub(request, response)
       const dataUser = await githubTools.getUserFromToken(accessToken);
+
       // console.log(dataUser)
-
       if (dataUser) {
+        // Ici requête d'inscription
+        const newUser = await connexionController.APICreateAccountControl(dataUser);
 
-        APIController.manageDB(dataUser, request, response);
+        // Si reponse avec un message, on tente de se connecter
+        if (newUser.message) {
+
+          console.log('newUser.message', newUser.message);
+          const body = JSON.stringify({ identifier: dataUser.email, password: dataUser.password });
+          connexionController.finalLoginCtrl(body, request, response);
+          // ici après c'est finalLoginCtrl qui gère...
+
+        } else {
+          // c bon !
+          request.session.user = newUser.user;
+          console.log(newUser)
+          request.session.user.token = newUser.jwt;
+          request.session.user.message = 'Ok inscrit !';
+          response.redirect('/categories');
+        }
 
       } else {
-
-        response.redirect('/connexion/stdLogin?msg_code=EC011');
-
+        response.redirect('/connexion/stdLogin?msg_code=EC001');
       }
+
     } catch (error) {
       console.log(error)
       response.redirect('/connexion/stdLogin?msg_code=EC100');
     }
   },
 
-  manageDB: (dataUser, request, response) => {
+  manageStrapi: (dataUser, request, response) => {
     // Ici on vérifie si l'utilisateur existe en DBUser
+
+
     connexionDB.getUserByEmail(dataUser.email, (err, res) => {
 
       if (err) { // Erreur dans la requête SELECT

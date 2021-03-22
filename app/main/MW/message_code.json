@@ -22,7 +22,7 @@
   "IC110": "Email non reconnu, peut-être une faute de frappe ?",
   "IC111": "Il semblerait que les mots de passe ne soient pas identiques...",
   "IC1000": "Il semblerait que des champs soient vides dans le formulaire...",
-  "IC1001": "Le mot de passe ne correspond pas à celui dans notre base de données...",
+  "IC1001": "On ne vous connait pas avec cet email et ce mot de passe, désolé.'",
 
   "EC000": "",
   "EC001": "Erreur, aucunes infos n'ont été récupérées lors de la requête à google API",

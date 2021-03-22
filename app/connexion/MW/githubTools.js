@@ -48,12 +48,14 @@ module.exports = {
         }
       })
 
+      const email = user.data.email;
+
       return {
         pseudo: user.data.login,
         firstName: '',
         lastName: '',
-        hashedPass: accessToken,
-        email: user.data.email
+        password: email.substring(3, 9) + '#topics!',
+        email
       };
 
     } catch (err) {
