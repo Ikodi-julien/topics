@@ -25,7 +25,7 @@ export const userInfoUtils = {
    * Allow to show userInfo with a click on button
    */
   addListener: () => {
-    if (document.getElementById('infoMessage') !== null) userInfoUtils.showInfo();
+    if (document.getElementById('infoMessage').textContent.trim.length) userInfoUtils.showInfo();
     infouserButton.addEventListener('click', userInfoUtils.showInfo);
   }
 };

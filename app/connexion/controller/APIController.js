@@ -70,13 +70,14 @@ const APIController = {
       if (typeof rawUser.jwt !== 'undefined') {
         // console.log('user :', dataUser);
         // dire de reinitialiser la session pour éviter les soucis d'identification
-        request.session.first = true;
+        request.session.connexionFirstRound = true;
         // ici mettre les valeurs d'identification dans la session
         request.session.user = rawUser.user;
         response.cookie('token', rawUser.jwt);
         request.session.user.message = 'Ok connecté !';
+        request.session.messageFirstDisplay = true;
 
-        response.redirect('/categories?msg_code=IC000');
+        response.redirect('/categories');
 
       } else {
         request.session.user.message = rawUser.data[0].messages[0].message;

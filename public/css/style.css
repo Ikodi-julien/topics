@@ -148,7 +148,7 @@
   margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
-  border: 1px solid #EA8C8C;
+  border: 1px solid #ffca41;
   border-radius: 5px;
   overflow: hidden;
   /*-------------------------------------------------*/
@@ -218,7 +218,7 @@
   position: absolute;
   top: 0;
   width: 100%;
-  color: #827d82;
+  color: #828282;
   font-size: 10px;
   padding: 5px;
   text-align: center;
@@ -444,7 +444,7 @@
   margin: 15px 0;
   border: none;
   border-radius: 5px;
-  background-color: #827d82;
+  background-color: #828282;
   color: #fcf9f2;
   font-size: 16px;
   font-weight: bold;

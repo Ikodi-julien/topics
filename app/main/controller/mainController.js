@@ -8,35 +8,40 @@ const mainController = {
   /**
    * Set the session' infos
    * 
-   * session.user : {
+   * session = user : {
    *                  id: -1,
    *                  token: '',
-   *                  message: ''
+   *                  message: '',
    *                },
+   *           firstMessage: false 
    */
   checkSession: function(request, response, next) {
 
     const user = [];
     if (!request.session.user) {
+
       request.session.user = {
         id: -1,
         token: '',
         message: ''
       }
-      request.session.first = false
+      request.session.messageFirstDisplay = false;
+      request.session.connexionFirstRound = false;
 
-    } else if (request.session.first) {
+    } else if (request.session.connexionFirstRound) {
 
       user.push(request.session.user);
       // Je regenère une session pour éviter les problèmes d'identifiant lié à la session
       request.session.regenerate((error) => {
         if (error) console.log('session regenerate error : ', error);
         console.log('SID', request.sessionID)
+
         request.session.user = user[0];
-        request.session.first = false;
+        request.session.messageFirstDisplay = true;
+        request.session.connexionFirstRound = false;
+
       })
     }
-    // console.log('final', request.session)
 
     next();
   },

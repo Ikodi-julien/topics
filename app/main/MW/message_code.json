@@ -6,7 +6,7 @@
       "E": "erreur dont on est pas responsable",
       "F": "erreur fatale, problème qui vient de chez nous..."
     },
-    "2 ème lettre": "C, F, M ou P pour la 1 ère lettre du module",
+    "2 ème lettre": "C, F, M ou P pour la 1ère lettre du module",
     "000": "le numéro d'ordre en binaire parceque c'est cool!",
     "FATALITY": "Message supplémentaire quand erreur fatale, ajouté en fin de message"
   },

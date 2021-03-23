@@ -1,8 +1,4 @@
 const connexionViews = require('../view/connexionViews');
-const connexionDB = require('../model/connexionDB');
-const bcrypt = require('bcrypt');
-const generatePassword = require('generate-password');
-const nodemailer = require('./../MW/nodemailer');
 const strapi = require('../../strapi/strapi');
 const { githubURL } = require('../MW/githubTools');
 const { url } = require('../MW/googleTools');
