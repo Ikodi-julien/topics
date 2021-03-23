@@ -17,7 +17,7 @@ export const quill = {
           // [{ 'align': [] }],
           // ['clean'],
           ['emoji'],
-          // ['link', 'image'] // 'video' possible
+          ['link', 'image'] // 'video' possible
         ],
     handlers: {
       'emoji': function() {}

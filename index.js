@@ -31,9 +31,10 @@ app.use(expressSession({
   saveUninitialized: false,
   unset: 'destroy',
   cookie: {
-    // maxAge: 1000 * 60 * 60 * 24 * 7,
+    maxAge: null,
     secure: false
-  }
+  },
+  name: 'topics.sid'
 
 }));
 

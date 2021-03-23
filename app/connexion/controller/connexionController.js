@@ -46,11 +46,12 @@ const connexionController = {
     try {
       // Demande connexion à l'API
       const dataUser = await strapi.logUser(body);
-      console.log(dataUser);
+      // console.log(dataUser);
 
       if (typeof dataUser.jwt !== 'undefined') {
         // console.log('user :', dataUser);
-
+        // dire de reinitialiser la session pour éviter les soucis de cookie
+        request.session.first = true;
         // ici mettre les valeurs d'identification dans la session
         request.session.user = dataUser.user;
         response.cookie('token', dataUser.jwt);
@@ -91,13 +92,11 @@ const connexionController = {
       form.email === '' ||
       form.password_1 === ''
     ) {
-
       response.redirect('/connexion/stdLogin?msg_code=IC1000');
       return
     }
 
     if (form.password_1 !== form.password_2) { // Passwords check
-
       response.redirect('/connexion/stdLogin?msg_code=IC111')
       return
     }
@@ -111,24 +110,51 @@ const connexionController = {
       lastname: form.lastname
     }
 
-    const newUser = await strapi.registerUser(body);
+    try {
+      const newUser = await strapi.registerUser(body);
 
-    // On gère les infos ou error
-    if (typeof newUser.error !== 'undefined' || typeof newUser.message !== 'undefined') {
-      // Ici on fixe la vue à afficher lors du render
-      request.params.view = 'stdLogin';
-      request.session.user.message = newUser.error || newUser.message;
-      console.log('newUser error : ', newUser.error);
-      console.log('newUser message : ', newUser.message);
-      connexionViews.view(request, response);
+      // On gère les infos ou error
+      if (typeof newUser.error !== 'undefined' || typeof newUser.message !== 'undefined') {
+        // Ici on fixe la vue à afficher lors du render
+        request.params.view = 'stdLogin';
+        request.session.user.message = newUser.error || newUser.message;
+        console.log('newUser error : ', newUser.error);
+        console.log('newUser message : ', newUser.message);
+        connexionViews.view(request, response);
+        return
+      }
 
-    } else {
-      // On connecte direct :
+      // On crée un token d'identification
+      const tokenBody = {
+        token: newUser.user.email + 'topicsQ',
+        user: newUser.user.id
+      }
+      // console.log('tokenbody :', tokenBody);
+
+      // On l'envoi à l'API
+      const rawToken = await strapi.setToken(tokenBody);
+
+      // On gère les infos ou error
+      if (typeof rawToken.error !== 'undefined' || typeof rawToken.message !== 'undefined') {
+        // Ici on fixe la vue à afficher lors du render
+        request.params.view = 'stdLogin';
+        request.session.user.message = newUser.error || newUser.message;
+        console.log('newUser error : ', newUser.error);
+        console.log('newUser message : ', newUser.message);
+        connexionViews.view(request, response);
+        return
+      }
+
       // Demande connexion à l'API
       connexionController.finalLoginCtrl(JSON.stringify({
         identifier: body.email,
         password: body.password
       }), request, response);
+
+    } catch (error) {
+      console.log(error)
+      request.params.view = 'stdLogin';
+      connexionViews.view(request, response);
     }
   },
 
@@ -146,19 +172,55 @@ const connexionController = {
       lastname: dataAPI.lastName
     }
 
+    // console.log(body);
     try {
       const newUser = await strapi.registerUser(body);
 
       // On gère les infos ou error
       if (typeof newUser.error !== 'undefined' || typeof newUser.message !== 'undefined') {
-
-        return { message: newUser.error || newUser.message };
-
-      } else {
-        return newUser;
+        // Ici on fixe la vue à afficher lors du render
+        request.params.view = 'stdLogin';
+        request.session.user.message = newUser.error || newUser.message;
+        console.log('newUser error : ', newUser.error);
+        console.log('newUser message : ', newUser.message);
+        connexionViews.view(request, response);
+        return
       }
+
+      // On crée un token d'identification
+      const tokenBody = {
+        token: newUser.user.email + 'topicsQ',
+        user: newUser.user.id
+      }
+      // console.log('tokenbody :', tokenBody);
+
+      // On l'envoi à l'API
+      const rawToken = await strapi.setToken(tokenBody);
+
+      // On gère les infos ou error
+      if (typeof rawToken.error !== 'undefined' || typeof rawToken.message !== 'undefined') {
+        // Ici on fixe la vue à afficher lors du render
+        request.params.view = 'stdLogin';
+        request.session.user.message = newUser.error || newUser.message;
+        console.log('newUser error : ', newUser.error);
+        console.log('newUser message : ', newUser.message);
+        connexionViews.view(request, response);
+        return
+      }
+
+      // Demande connexion à l'API
+      connexionController.finalLoginCtrl(JSON.stringify({
+        identifier: body.email,
+        password: body.password
+      }), request, response);
+
     } catch (error) {
       console.log(error);
+      request.params.view = 'stdLogin';
+      // request.session.user.message = newUser.error || newUser.message;
+      // console.log('newUser error : ', newUser.error);
+      // console.log('newUser message : ', newUser.message);
+      connexionViews.view(request, response);
     }
   },
 

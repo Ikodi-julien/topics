@@ -86,7 +86,8 @@ export const formHandler = {
       });
 
       const topic = await response.json();
-      // console.log(topic);
+      console.log('topic after post', topic);
+
       if (response.ok) {
         const isCreated = await topicPageUtils.createTopic(topic)
 
@@ -162,6 +163,7 @@ export const formHandler = {
           quill.newQuill.setContents('');
         }
       } else {
+
         console.log(response.statusText);
       }
 
@@ -217,11 +219,21 @@ export const formHandler = {
       if (response.ok) {
         return true;
       } else {
-        throw (response.statusText);
+        throw ({ resStatus: response.status });
       }
 
     } catch (error) {
-      console.error(error);
+
+      const errors = [];
+      errors.push(error);
+
+      if (errors[0].resStatus === 401) {
+        alert("Il faut être l'auteur d'un message pour le modifier");
+      } else {
+        console.log(errors);
+        alert("voir l'erreur en console");
+      }
+      return false;
     }
   },
 
@@ -272,11 +284,21 @@ export const formHandler = {
       if (response.ok) {
         return true;
       } else {
-        throw (response.statusText);
+        throw ({ resStatus: response.status });
       }
 
     } catch (error) {
-      console.error(error);
+
+      const errors = [];
+      errors.push(error);
+
+      if (errors[0].resStatus === 401) {
+        alert("Il faut être l'auteur d'un topic pour le modifier");
+      } else {
+        console.log(errors);
+        alert("voir l'erreur en console");
+      }
+      return false;
     }
   },
 }

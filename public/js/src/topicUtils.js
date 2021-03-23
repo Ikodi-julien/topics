@@ -10,7 +10,7 @@ export const topicPageUtils = {
    */
   createTopic: async (topic) => {
 
-    // console.log(topic);
+    console.log(topic);
     const errors = [];
 
     try {
@@ -242,11 +242,8 @@ export const topicPageUtils = {
     // PUT le nouveau message,
     validBtn.addEventListener('click', async (event) => {
 
-      let isInAPI = await formHandler.putTopic(event)
-      if (!isInAPI) {
-        console.log('putTopic...Problème');
-        return
-      }
+      await formHandler.putTopic(event)
+
       // revenir à un quill sans rien
       event.target.closest('.topic').querySelector('.ql-toolbar').remove()
       editor.style.border = "none";
@@ -254,7 +251,6 @@ export const topicPageUtils = {
       validBtn.remove();
       quill.disable();
     })
-
 
     const quitBtn = document.createElement('button');
     quitBtn.classList.add('topic__button__control')

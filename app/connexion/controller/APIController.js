@@ -3,6 +3,8 @@ const githubTools = require('./../MW/githubTools');
 const connexionDB = require('./../model/connexionDB');
 const connexionController = require('../controller/connexionController');
 const connexionViews = require('../view/connexionViews');
+const strapi = require('../../strapi/strapi');
+const { raw } = require('express');
 
 const APIController = {
 
@@ -17,24 +19,37 @@ const APIController = {
       const dataGoogle = await googleTools.getGoogleAccountFromCode(request.query.code);
 
       if (dataGoogle) {
-        // Ici requête d'inscription
-        const newUser = await connexionController.APICreateAccountControl(dataGoogle);
+        const body = {
+          identifier: dataGoogle.email,
+          password: dataGoogle.password,
+        }
+        // console.log(body);
+        // Tentative de log in
+        const dataUser = await strapi.logUser(JSON.stringify(body));
+        // console.log(dataUser);
 
-        // Si reponse avec un message, on tente de se connecter
-        if (newUser.message) {
+        if (dataUser.statusCode !== 400) { //
 
-          console.log('newUser.message', newUser.message);
-          const body = JSON.stringify({ identifier: dataGoogle.email, password: dataGoogle.password });
-          connexionController.finalLoginCtrl(body, request, response);
-          // ici après c'est finalLoginCtrl qui gère...
+          if (typeof dataUser.jwt !== 'undefined') {
+            // console.log('user :', dataUser);
+            // dire de reinitialiser la session pour éviter les soucis de cookie
+            request.session.first = true;
+            // ici mettre les valeurs d'identification dans la session
+            request.session.user = dataUser.user;
+            response.cookie('token', dataUser.jwt);
+            request.session.user.message = 'Ok connecté !';
+
+            response.redirect('/categories?msg_code=IC000');
+
+          } else {
+            request.session.user.message = dataUser.data[0].messages[0].message;
+            response.redirect('/connexion/stdLogin')
+          }
 
         } else {
-          // c bon !
-          request.session.user = newUser.user;
-          console.log(newUser)
-          request.session.user.token = newUser.jwt;
-          request.session.user.message = 'Ok inscrit !';
-          response.redirect('/categories');
+          // Ici requête d'inscription
+          await connexionController.APICreateAccountControl(dataGoogle, request, response);
+          return
         }
 
       } else {
@@ -53,28 +68,41 @@ const APIController = {
     try {
 
       const accessToken = await githubTools.getAccessTokenFromGithub(request, response)
-      const dataUser = await githubTools.getUserFromToken(accessToken);
+      const dataGithub = await githubTools.getUserFromToken(accessToken);
 
       // console.log(dataUser)
-      if (dataUser) {
-        // Ici requête d'inscription
-        const newUser = await connexionController.APICreateAccountControl(dataUser);
+      if (dataGithub) {
+        const body = {
+          identifier: dataGithub.email,
+          password: dataGithub.password,
+        }
+        // console.log(body);
+        // Tentative de log in
+        const dataUser = await strapi.logUser(JSON.stringify(body));
+        // console.log(dataUser);
 
-        // Si reponse avec un message, on tente de se connecter
-        if (newUser.message) {
+        if (dataUser.statusCode !== 400) { //
 
-          console.log('newUser.message', newUser.message);
-          const body = JSON.stringify({ identifier: dataUser.email, password: dataUser.password });
-          connexionController.finalLoginCtrl(body, request, response);
-          // ici après c'est finalLoginCtrl qui gère...
+          if (typeof dataUser.jwt !== 'undefined') {
+            // console.log('user :', dataUser);
+            // dire de reinitialiser la session pour éviter les soucis de cookie
+            request.session.first = true;
+            // ici mettre les valeurs d'identification dans la session
+            request.session.user = dataUser.user;
+            response.cookie('token', dataUser.jwt);
+            request.session.user.message = 'Ok connecté !';
+
+            response.redirect('/categories?msg_code=IC000');
+
+          } else {
+            request.session.user.message = dataUser.data[0].messages[0].message;
+            response.redirect('/connexion/stdLogin')
+          }
 
         } else {
-          // c bon !
-          request.session.user = newUser.user;
-          console.log(newUser)
-          request.session.user.token = newUser.jwt;
-          request.session.user.message = 'Ok inscrit !';
-          response.redirect('/categories');
+          // Ici requête d'inscription
+          await connexionController.APICreateAccountControl(dataGoogle, request, response);
+          return
         }
 
       } else {
@@ -83,13 +111,12 @@ const APIController = {
 
     } catch (error) {
       console.log(error)
-      response.redirect('/connexion/stdLogin?msg_code=EC100');
+      response.redirect('/connexion/stdLogin?msg_code=EC010');
     }
   },
 
   manageStrapi: (dataUser, request, response) => {
     // Ici on vérifie si l'utilisateur existe en DBUser
-
 
     connexionDB.getUserByEmail(dataUser.email, (err, res) => {
 

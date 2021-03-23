@@ -36,8 +36,8 @@ export const messagePageUtils = {
   },
 
   /**
-   * Create an add topic elements in DOM
-   * @param {Object} topic - Un des topics récup avec la catégorie
+   * Create an add message elements in DOM
+   * @param {Object} message - Un des messages récup avec le topic
    */
   createMessage: async (message) => {
 
@@ -145,7 +145,6 @@ export const messagePageUtils = {
       const topicId = document.querySelector('#topicId').textContent.toLowerCase();
       // On récupère la liste des messages pour ce topic
       try {
-
         const data = await fetch(`http://localhost:1337/topics/${topicId}`);
 
         if (data.ok) {
@@ -171,7 +170,6 @@ export const messagePageUtils = {
     const message = event.target.closest('.message');
 
     try {
-
       // Récupérer le token laissé au moment de la connexion
       const token = getCookie.get('token');
 
@@ -182,7 +180,6 @@ export const messagePageUtils = {
       }
 
       const authorization = `Bearer ${token}`;
-
 
       const response = await fetch(`http://localhost:1337/messages/${message.dataset.id}`, {
         method: 'DELETE',
@@ -242,11 +239,8 @@ export const messagePageUtils = {
     // PUT le nouveau message,
     validBtn.addEventListener('click', async (event) => {
 
-      let isInAPI = await formHandler.putMessage(event)
-      if (!isInAPI) {
-        console.log('putMessage...Problème');
-        return
-      }
+      await formHandler.putMessage(event)
+
       // revenir à un quill sans rien
       event.target.closest('.message').querySelector('.ql-toolbar').remove()
       editor.style.border = "none";
@@ -254,7 +248,6 @@ export const messagePageUtils = {
       validBtn.remove();
       quill.disable();
     })
-
 
     const quitBtn = document.createElement('button');
     quitBtn.classList.add('message__button__control')

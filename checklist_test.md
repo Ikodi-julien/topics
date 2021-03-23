@@ -7,11 +7,11 @@
 - Création de compte avec formulaire : ok
 - Création de compte avec google : ok
 - Création de compte avec github : ok
-- Envoi email si mot de passe perdu : **à gérer lors push serveur**
+- Envoi email si mot de passe perdu : ok **à gérer lors push serveur**
 
 ## Profil :
-- Modification du pseudo : **à faire**
-- Modification de l'email : **à faire**
+- Modification du pseudo : ok
+- Modification de l'email : ok
 - Modification du mot de passe : **à faire**
 
 ## Forum :
@@ -36,4 +36,4 @@
 - Peut update un message : ok
 - Peut delete un topic : ok
 - Peut delete un message : ok
-- L'update ou delete d'un topic ou d'un message n'est possible que par son auteur : **à faire**
+- L'update ou delete d'un topic ou d'un message n'est possible que par son auteur : ok

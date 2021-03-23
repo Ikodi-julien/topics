@@ -13,8 +13,12 @@ const app = {
 
   disconnect: () => {
     console.log('disconnect');
-    // Supprime le cookie du navigateur
+    // Supprime le cookie d'identification et de session du navigateur
     document.cookie = "token=true; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    document.cookie = "topics.sid=true; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+
+    /* Remarque : Si l'utilisateur ne fermez pas son navigateur et/ou ne se 
+    deconnecte pas, les cookies restent en place */
     // La session sera réinitialisée à cette adresse
     location.href = '/connexion/disconnect';
   },
