@@ -64,7 +64,7 @@ export const profile = {
     // console.log(body);
 
     // Récupérer le token laissé au moment de la connexion
-    const token = getCookie.get('token');
+    const token = getCookie('token');
 
     if (!token) {
       alert("Vous n'êtes pas autorisé, désolé...");
@@ -130,7 +130,7 @@ export const profile = {
     console.log(body);
 
     // Récupérer le token laissé au moment de la connexion
-    const token = getCookie.get('token');
+    const token = getCookie('token');
 
     if (!token) {
       alert("Vous n'êtes pas autorisé, désolé...");

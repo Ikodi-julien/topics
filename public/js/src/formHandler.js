@@ -2,6 +2,7 @@ import { messagePageUtils } from './messageUtils.js';
 import { quill } from './quill.js';
 import { topicPageUtils } from './topicUtils.js';
 import { getCookie } from './getCookie.js';
+import { STRAPI_URL } from './STRAPI_URL.js';
 
 export const formHandler = {
 
@@ -32,7 +33,6 @@ export const formHandler = {
 
     // Récupération du formulaire, du titre, de l'url, de la cat id et user id :
     const form = event.target;
-    const url = form.dataset.action;
     const topicTitle = form.querySelector('input[name="topic__title"]').value;
     const catId = document.querySelector('#catId').textContent;
     const catName = document.querySelector('.categories__category__title').textContent.toLowerCase();
@@ -55,7 +55,7 @@ export const formHandler = {
     }
 
     // Récupérer le token laissé au moment de la connexion
-    const token = getCookie.get('token');
+    const token = getCookie('token');
 
     if (!token) {
 
@@ -76,7 +76,7 @@ export const formHandler = {
     console.log(body);
 
     try {
-      const response = await fetch(`http://localhost:1337${url}`, {
+      const response = await fetch(`${STRAPI_URL}/topics`, {
         method: 'POST',
         headers: {
           "content-type": "application/json",
@@ -133,7 +133,7 @@ export const formHandler = {
     console.log(body);
 
     // Récupérer le token laissé au moment de la connexion
-    const token = getCookie.get('token');
+    const token = getCookie('token');
 
     if (!token) {
 
@@ -144,7 +144,7 @@ export const formHandler = {
     const authorization = `Bearer ${token}`;
 
     try {
-      const response = await fetch(`http://localhost:1337/messages`, {
+      const response = await fetch(`${STRAPI_URL}/messages`, {
         method: 'POST',
         headers: {
           "content-type": "application/json",
@@ -196,7 +196,7 @@ export const formHandler = {
     console.log(body);
 
     // Récupérer le token laissé au moment de la connexion
-    const token = getCookie.get('token');
+    const token = getCookie('token');
 
     if (!token) {
 
@@ -207,7 +207,7 @@ export const formHandler = {
     const authorization = `Bearer ${token}`;
 
     try {
-      const response = await fetch(`http://localhost:1337/messages/${messageId}`, {
+      const response = await fetch(`${STRAPI_URL}/messages/${messageId}`, {
         method: 'PUT',
         headers: {
           "content-type": "application/json",
@@ -261,7 +261,7 @@ export const formHandler = {
     // console.log(body);
 
     // Récupérer le token laissé au moment de la connexion
-    const token = getCookie.get('token');
+    const token = getCookie('token');
 
     if (!token) {
 
@@ -272,7 +272,7 @@ export const formHandler = {
     const authorization = `Bearer ${token}`;
 
     try {
-      const response = await fetch(`http://localhost:1337/topics/${topicId}`, {
+      const response = await fetch(`${STRAPI_URL}/topics/${topicId}`, {
         method: 'PUT',
         headers: {
           "content-type": "application/json",

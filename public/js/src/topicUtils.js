@@ -92,7 +92,7 @@ export const topicPageUtils = {
 
       /*--- IF USER AUTHENTICATED ---*/
 
-      if (getCookie.get('token')) {
+      if (getCookie('token')) {
 
         // Ajouter les boutons edit et delete dans le footer
         const footer = node.querySelector('.topic__footer .topic__button__row');
@@ -175,7 +175,7 @@ export const topicPageUtils = {
     try {
 
       // Récupérer le token laissé au moment de la connexion
-      const token = getCookie.get('token');
+      const token = getCookie('token');
 
       if (!token) {
 

@@ -24,19 +24,6 @@ const connexionController = {
   deleteUser: (request, response) => { connexionViews.view(request, response); },
 
   /*-------------- FORM CONTROL ------------*/
-  /**
-   * Controls wether the user informations matches usersDatabase
-   */
-  formLoginControl: async (request, response) => {
-
-    // On prépare la requête API pour un token d'identité
-    const body = JSON.stringify({
-      identifier: request.body.email,
-      password: request.body.password
-    })
-
-    connexionController.finalLoginCtrl(body, request, response);
-  },
 
   /**
    * Function for stdLogin, googlelogin, github login...
@@ -222,111 +209,6 @@ const connexionController = {
       // console.log('newUser message : ', newUser.message);
       connexionViews.view(request, response);
     }
-  },
-
-
-  /**
-   * Performs checkings over lost password request
-   */
-  lostPasswordControl: (request, response) => {
-
-    // Récup du formulaire
-    const email = request.body.email;
-
-    // Ici vérifier que l'email est en base de données
-    connexionDB.isEmailInDB(email, (error, data) => {
-
-      if (error) {
-        console.log('dans lostPassWordControl - isEmailInDB :', error);
-        response.redirect('/connexion/stdLogin?msg_code=FC000');
-
-      } else {
-
-        if (data.rowCount) {
-          // console.log('isEmailInDB : ', data);
-          // Stocker les données utilisateur
-          const user = data.rows[0];
-
-          // Générer un nouveau mot de passe
-          const newPassword = generatePassword.generate({
-            length: 8,
-            numbers: true,
-          })
-
-          // Le crypter avant de le mettre en DB
-          // Le mettre en DB
-          const insertData = {
-            id: user.id,
-            hashedPassword: bcrypt.hashSync(newPassword, 10)
-          }
-
-          connexionDB.insertDefaultPassword(insertData, (error, results) => {
-
-            if (error) {
-
-              console.log('dans lostPassWordControl - insertDefaultPassword :', error);
-              response.redirect('/connexion/stdLogin?msg_code=FC000');
-
-            } else {
-
-              user.password = newPassword;
-
-              // Sendmail personnifie le message envoyé
-              nodemailer.sendLostPassMail(user, (error, info) => {
-
-                if (error) {
-                  console.log(error);
-                  response.redirect('/connexion/stdLogin?msg_code=FC011');
-
-                } else {
-                  // console.log('results de insertDefaultPassword:', info.response);
-                  response.redirect('/connexion/stdLogin?msg_code=IC011');
-                }
-              })
-            }
-          })
-        } else {
-          response.redirect('/connexion/stdLogin?msg_code=IC100')
-        }
-      }
-    })
-  },
-
-  /**
-   * Supprime un user de la BDD
-   */
-  deleteUserControl: (request, response) => {
-
-    connexionDB.deleteUser(request.body.id, (error, results) => {
-
-      if (error) {
-
-        console.log('dans deleteUser :', error);
-        response.redirect('/connexion/stdLogin?msg_code=FC000');
-
-      } else {
-
-        response.redirect('/connexion/stdLogin?msg_code=IC101');
-      }
-    })
-  },
-
-  //TODO................................................................
-  /**
-   * When a user responds to a "reinitialize password email", 
-   * we have to make sure that everything is under control
-   * @param {*} request 
-   * @param {*} response 
-   */
-  checkDataMail: (request, response) => {
-
-    // Ascertain code
-
-    // if code ok set session détails
-
-    // redirect to profile in order to set a new password
-
-
   }
 }
 

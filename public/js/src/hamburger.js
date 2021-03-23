@@ -1,18 +1,14 @@
-/*--------------------------------------------------*/
-/*----------- HAMBURGER ----------------------------*/
-/*--------------------------------------------------*/
-
 export const hamMenu = {
 
   hamburger: document.getElementById("nav-hamburger"),
-  menu: document.getElementsByClassName('header__nav')[0],
+  menu: document.getElementsByClassName('header__nav'),
 
   addEventListener: () => {
 
-    if (document.getElementsByClassName('header__nav').length) {
+    if (hamMenu.menu.length) {
       hamMenu.hamburger.addEventListener("click", () => {
         hamMenu.hamburger.classList.toggle("open");
-        hamMenu.menu.classList.toggle("header__nav__show");
+        hamMenu.menu[0].classList.toggle("header__nav__show");
       })
     }
   }
