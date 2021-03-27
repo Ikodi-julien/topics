@@ -162,14 +162,15 @@ function fn_emojiElementsToPanel(type,panel,quill){
         let customButton = document.querySelector('.bem-' + emoji.item.name);
         if (customButton) {
             customButton.addEventListener('click', function() {
+                
+                /* Lines that were commented before */
                 quill.insertText(range.index, customButton.innerHTML);
                 quill.setSelection(range.index + customButton.innerHTML.length, 0);
-                
-                /* Les lignes ci-dessous provoquaient un problème de perte de focus à l'insertion d'emoji */
                 // range.index = range.index + customButton.innerHTML.length;
+                
+                /* Lines commented, were responsible for lose of focus in my case */
                 // quill.insertEmbed(range.index, 'emoji', emoji.item, Quill.sources.USER);
                 // setTimeout(() => quill.setSelection(range.index + 1), 0, Quill.sources.USER);
-                // quill.setSelection(range.index + 5, 5, "user");
                 fn_close();
             });
         }

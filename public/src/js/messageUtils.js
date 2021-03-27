@@ -1,5 +1,5 @@
-import { formHandler } from './formHandler.js';
-import { getCookie } from './getCookie.js';
+import { messageRequest } from './messageAPIRequest.js';
+import { getCookie, STRAPI_URL } from './utils.js';
 
 export const messagePageUtils = {
 
@@ -41,10 +41,10 @@ export const messagePageUtils = {
    */
   createMessage: async (message) => {
 
-    console.log(message);
+    // console.log(message);
     /************ LES VARIABLES !!!!************/
     const errors = [];
-    let author, catName;
+    let author, authorJSON, me;
 
     // Récup du template :
     const template = document.getElementById('messageTemplate');
@@ -62,11 +62,10 @@ export const messagePageUtils = {
         const resAuthor = await fetch(`http://localhost:1337/users/${message.author}`)
 
         if (!resAuthor.ok) {
-          errors.push({ resAuthor: resAuthor.statusText });
-          return
+          errors.push(`Requête auteur : ${resAuthor.statusText}`);
 
         } else {
-          const authorJSON = await resAuthor.json();
+          authorJSON = await resAuthor.json();
           author = authorJSON.username;
         }
 
@@ -74,7 +73,7 @@ export const messagePageUtils = {
         author = message.author.username;
       }
 
-      console.log(author);
+      // console.log(author);
       node.querySelector('.message__header__author').textContent = author;
 
       // Date de création
@@ -88,21 +87,52 @@ export const messagePageUtils = {
 
       if (getCookie('token')) {
 
-        // Ajouter les boutons edit et delete dans le footer
-        const footer = node.querySelector('.message__footer');
+        // De plus, vérifier si l'utilisateur est l'auteur du topic
+        const authorId = authorJSON.id;
+        console.log('author-id : ', authorId);
+        
+        // TODO : Récupérer le token dans localStorage
+        const token = getCookie('token');
 
-        const deleteBtn = document.createElement('button');
-        deleteBtn.classList.add('message__button__control', 'delete__btn');
-        deleteBtn.innerHTML = '<i class="far fa-trash-alt"></i>';
-        deleteBtn.addEventListener('click', messagePageUtils.deleteMessage);
+        if (!token) {
+          alert("Pas de token... pas de token.");
+          return
+        }
 
-        const editBtn = document.createElement('button');
-        editBtn.classList.add('message__button__control', 'edit__btn');
-        editBtn.innerHTML = '<i class="far fa-edit"></i>';
-        editBtn.addEventListener('click', messagePageUtils.updateMessage);
+        const authorization = `Bearer ${token}`;
+        // Récupérer le user (me) à l'aide du token
+        try {
+        const rawMe = await fetch(`${STRAPI_URL}/users/me`, {
+          method: 'GET',
+          headers: {
+            "content-type": "application/json",
+            "Authorization": authorization
+          }
+        })
+        me = await rawMe.json()
+        // console.log(me);
+        } catch(error) {
+          errors.push(`Requête données utilisateur : ${me}`)
+        }
+      
+        // Comparer les deux si 'same' on continue
+        if (authorId === me.id) {
+          // Ajouter les boutons edit et delete dans le footer
+          const footer = node.querySelector('.message__footer');
 
-        footer.appendChild(deleteBtn);
-        footer.appendChild(editBtn);
+          const deleteBtn = document.createElement('button');
+          deleteBtn.classList.add('message__button__control', 'delete__btn');
+          deleteBtn.innerHTML = '<i class="far fa-trash-alt"></i>';
+          deleteBtn.addEventListener('click', messageRequest.deleteMessage);
+
+          const editBtn = document.createElement('button');
+          editBtn.classList.add('message__button__control', 'edit__btn');
+          editBtn.innerHTML = '<i class="far fa-edit"></i>';
+          editBtn.addEventListener('click', messagePageUtils.updateMessageManager);
+
+          footer.appendChild(deleteBtn);
+          footer.appendChild(editBtn);
+        }
       }
       /********************************************/
 
@@ -126,7 +156,7 @@ export const messagePageUtils = {
       if (!errors.length) {
         return true;
       } else {
-        throw new Error(JSON.stringify(errors));
+        errors.forEach( error => alert(error));
       }
 
     } catch (error) {
@@ -164,45 +194,8 @@ export const messagePageUtils = {
       }
     }
   },
-
-  deleteMessage: async (event) => {
-
-    const message = event.target.closest('.message');
-
-    try {
-      // Récupérer le token laissé au moment de la connexion
-      const token = getCookie('token');
-
-      if (!token) {
-
-        alert("Vous n'avez pas les droits pour supprimer ce topic, désolé...");
-        return
-      }
-
-      const authorization = `Bearer ${token}`;
-
-      const response = await fetch(`http://localhost:1337/messages/${message.dataset.id}`, {
-        method: 'DELETE',
-        headers: {
-          "Authorization": authorization
-        }
-      })
-
-      if (response.ok) {
-
-        document.querySelector('.message__list').removeChild(message);
-        console.log('deleted');
-
-      } else {
-        console.log(response.statusText)
-      }
-
-    } catch (error) {
-      console.log(error.stack);
-    }
-  },
-
-  updateMessage: (event) => {
+  
+  updateMessageManager: (event) => {
     // Récupérer le quill
     const editor = event.target.closest('.message').querySelector('.ql-container');
     var quill = new Quill(editor, {
@@ -239,7 +232,7 @@ export const messagePageUtils = {
     // PUT le nouveau message,
     validBtn.addEventListener('click', async (event) => {
 
-      await formHandler.putMessage(event)
+      await messageRequest.putMessage(event)
 
       // revenir à un quill sans rien
       event.target.closest('.message').querySelector('.ql-toolbar').remove()

@@ -1,46 +1,7 @@
-import { getCookie } from './getCookie.js';
 
-export const profile = {
 
-  showButtons: document.querySelectorAll('.profile__formContainer__titleRow'),
-  closeButtons: document.querySelectorAll('.profile__form__close'),
-  pseudoForm: document.querySelectorAll('#pseudoForm'),
-  emailForm: document.querySelectorAll('#emailForm'),
-
-  addEventListener: function() {
-
-    if (profile.showButtons.length) {
-      for (const button of profile.showButtons) {
-        button.addEventListener('click', profile.showForm)
-      };
-      for (const button of profile.closeButtons) {
-        button.addEventListener('click', profile.hideForm)
-      }
-    }
-
-    if (profile.pseudoForm.length) {
-      profile.pseudoForm[0].addEventListener('submit', profile.updatePseudo);
-    }
-
-    if (profile.emailForm.length) {
-      profile.emailForm[0].addEventListener('submit', profile.updateEmail);
-    }
-  },
-
-  showForm: function(event) {
-
-    const form = event.target;
-    form.closest('.profile__formContainer').classList.toggle('--showProfileForm');
-
-  },
-
-  hideForm: function(event) {
-
-    const form = event.target;
-    form.closest('.profile__formContainer').classList.remove('--showProfileForm');
-
-  },
-
+export const profileRequest = {
+  
   updatePseudo: async (event) => {
     event.preventDefault();
     // console.log('dans update');

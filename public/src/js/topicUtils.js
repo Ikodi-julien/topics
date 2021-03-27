@@ -1,5 +1,5 @@
-import { formHandler } from './formHandler.js';
-import { getCookie } from './getCookie.js';
+import { getCookie, STRAPI_URL } from './utils.js';
+import {topicRequest} from './topicAPIRequest';
 
 export const topicPageUtils = {
 
@@ -9,10 +9,10 @@ export const topicPageUtils = {
    * @param {Object} topic - Un des topics récup avec la catégorie
    */
   createTopic: async (topic) => {
-
-    console.log(topic);
+    // console.log(topic);
     const errors = [];
 
+    let author, authorJSON, catName, me;
     try {
       // Récup du template :
       const template = document.getElementById('topicTemplate');
@@ -24,15 +24,13 @@ export const topicPageUtils = {
 
       // L'adresse du lien, il faut le nom de la catégorie
       // si le topic vient d'une catégorie, on a que l'id de la catégorie
-      let catName;
       if (typeof topic.category === "number") { // On doit récup le nom de la cat
 
-        const resCatName = await fetch(`http://localhost:1337/categories/${topic.category}`)
+        const resCatName = await fetch(`${STRAPI_URL}/categories/${topic.category}`)
 
         if (!resCatName.ok) {
 
-          errors.push({ resCatName: resCatName.statusText });
-          return
+          errors.push(`Requete categories :${resCatName.statusText}` );
 
         } else {
           const catNameJSON = await resCatName.json();
@@ -48,18 +46,16 @@ export const topicPageUtils = {
       node.querySelector('.topicMessagesHref').href = url;
 
       // Nom de l'auteur, même problème que la catégorie
-      let author;
       if (typeof topic.author === "number") { // On doit récup le nom de la cat
 
-        const resAuthor = await fetch(`http://localhost:1337/users/${topic.author}`)
+        const resAuthor = await fetch(`${STRAPI_URL}/users/${topic.author}`)
 
         if (!resAuthor.ok) {
-          errors.push({ resAuthor: resAuthor.statusText });
-          return
+          errors.push(`Requete auteur :${resAuthor.statusText}` );
 
         } else {
 
-          const authorJSON = await resAuthor.json();
+          authorJSON = await resAuthor.json();
           // console.log('authorJSON : ', authorJSON);
           author = authorJSON.username;
         }
@@ -75,9 +71,9 @@ export const topicPageUtils = {
       node.querySelector('.topicCreatedAt').textContent = new Date(topic.created_at).toLocaleDateString();
 
       // Nb de messages
-      const resNbMessage = await fetch(`http://localhost:1337/topics/${topic.id}`)
+      const resNbMessage = await fetch(`${STRAPI_URL}/topics/${topic.id}`)
       if (!resNbMessage.ok) {
-        errors.push({ resNbMessage: resNbMessage.statusText });
+          errors.push(`Requete nombre de messages :${resNbMessage.statusText}` );
       } else {
         const topicMessages = await resNbMessage.json();
         node.querySelector('.nbMessages').textContent = topicMessages.messages.length;
@@ -94,22 +90,54 @@ export const topicPageUtils = {
 
       if (getCookie('token')) {
 
-        // Ajouter les boutons edit et delete dans le footer
-        const footer = node.querySelector('.topic__footer .topic__button__row');
+        // De plus, vérifier si l'utilisateur est l'auteur du topic
+        const authorId = authorJSON.id;
+        console.log('author-id : ', authorId);
+        
+        // TODO : Récupérer le token dans localStorage
+        const token = getCookie('token');
 
-        const deleteBtn = document.createElement('button');
-        deleteBtn.classList.add('topic__button__control', 'edit__btn');
-        deleteBtn.innerHTML = '<i class="far fa-trash-alt"></i>';
-        deleteBtn.addEventListener('click', topicPageUtils.deleteTopic);
+        if (!token) {
+          alert("Pas de token... pas de token.");
+          return
+        }
 
-        const editBtn = document.createElement('button');
-        editBtn.classList.add('topic__button__control', 'delete__btn');
-        editBtn.innerHTML = '<i class="far fa-edit"></i>';
-        editBtn.addEventListener('click', topicPageUtils.updateTopic);
+        const authorization = `Bearer ${token}`;
+        // Récupérer le user (me) à l'aide du token
+        try {
+        const rawMe = await fetch(`${STRAPI_URL}/users/me`, {
+          method: 'GET',
+          headers: {
+            "content-type": "application/json",
+            "Authorization": authorization
+          }
+        })
+        me = await rawMe.json()
+          
+        } catch(error) {
+          errors.push(`Requête données utilisateur : ${me.data[0].messages[0].id}`)
+        }
+      
+        // Comparer les deux si 'same' on continue
+        if (authorId === me.id) {
+          // Ajouter les boutons edit et delete dans le footer
+          const footer = node.querySelector('.topic__footer .topic__button__row');
 
-        footer.appendChild(deleteBtn);
-        footer.appendChild(editBtn);
+          const deleteBtn = document.createElement('button');
+          deleteBtn.classList.add('topic__button__control', 'edit__btn');
+          deleteBtn.innerHTML = '<i class="far fa-trash-alt"></i>';
+          deleteBtn.addEventListener('click', topicRequest.deleteTopic);
+
+          const editBtn = document.createElement('button');
+          editBtn.classList.add('topic__button__control', 'delete__btn');
+          editBtn.innerHTML = '<i class="far fa-edit"></i>';
+          editBtn.addEventListener('click', topicPageUtils.handleUpdateTopic);
+
+          footer.appendChild(deleteBtn);
+          footer.appendChild(editBtn);
+        }
       }
+      
       /*-------------------------------*/
       // ADD elt in DOM
       document.querySelector('.topics__container').appendChild(node);
@@ -128,8 +156,8 @@ export const topicPageUtils = {
 
       if (!errors.length) {
         return true;
-      } else {
-        throw new Error(JSON.stringify(errors));
+      } else { 
+        errors.forEach(error => alert(error));
       }
 
     } catch (error) {
@@ -168,45 +196,16 @@ export const topicPageUtils = {
     }
   },
 
-  deleteTopic: async (event) => {
-
-    const topic = event.target.closest('.topic');
-
-    try {
-
-      // Récupérer le token laissé au moment de la connexion
-      const token = getCookie('token');
-
-      if (!token) {
-
-        alert("Vous n'avez pas les droits pour supprimer ce topic, désolé...");
-        return
-      }
-
-      const authorization = `Bearer ${token}`;
-
-      const response = await fetch(`http://localhost:1337/topics/${topic.dataset.id}`, {
-        method: 'DELETE',
-        headers: {
-          "Authorization": authorization
-        }
-      })
-
-      if (response.ok) {
-
-        document.querySelector('.topics__container').removeChild(topic);
-        console.log('deleted');
-
-      } else {
-        throw (response.statusText)
-      }
-
-    } catch (error) {
-      console.log(error);
-    }
-  },
-
-  updateTopic: (event) => {
+  /**
+   * 
+   * @param {Event} event 
+   */
+  handleUpdateTopic: (event) => {
+    // A ce niveau là, normalement les boutons de modification 
+    // n'apparaissent que si c'est l'auteur
+    // La sécu ultime est assurée par strapi qui vérifie que 
+    // c'est l'auteur du message qui cherche à le modifier
+    
     // Récupérer le quill
     const editor = event.target.closest('.topic').querySelector('.ql-container');
     var quill = new Quill(editor, {
@@ -242,7 +241,7 @@ export const topicPageUtils = {
     // PUT le nouveau message,
     validBtn.addEventListener('click', async (event) => {
 
-      await formHandler.putTopic(event)
+      await topicRequest.putTopic(event)
 
       // revenir à un quill sans rien
       event.target.closest('.topic').querySelector('.ql-toolbar').remove()

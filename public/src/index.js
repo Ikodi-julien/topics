@@ -1,16 +1,12 @@
-import './css/reset.css';
+// import './css/reset.css';
 import './css/quill-emoji.css';
-import './css/style.css';
+// import './css/style.css';
 
-import { topicPageUtils } from './js/topicUtils.js';
-import { messagePageUtils } from './js/messageUtils.js';
-import { quill } from './js/quill.js';
-import { quillRegister } from '../src/js/quill-emoji/src/quill-emoji'
-import { userInfoUtils } from './js/userInfoUtils.js';
-import { profile } from './js/profileUtils.js';
-import { connexionUtils } from './js/connexionUtils.js';
-import { formHandler } from './js/formHandler.js';
-import { hamMenu } from './js/hamburger.js';
+import {quillRegister} from './js/quill-emoji/src/quill-emoji.js';
+import { quill, checkInfo } from './js/utils.js';
+import {topicPageUtils} from './js/topicUtils.js';
+import {messagePageUtils} from './js/messageUtils.js';
+import {addEventListener} from './js/addEventListener.js';
 
 const app = {
 
@@ -22,7 +18,7 @@ const app = {
     document.cookie = "token=true; expires=Thu, 01 Jan 1970 00:00:00 GMT";
     document.cookie = "topics.sid=true; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 
-    /* Remarque : Si l'utilisateur ne fermez pas son navigateur et/ou ne se 
+    /* Remarque : Si l'utilisateur ne ferme pas son navigateur et/ou ne se 
     deconnecte pas, les cookies restent en place */
     // La session sera réinitialisée à cette adresse
     location.href = '/connexion/disconnect';
@@ -34,12 +30,9 @@ const app = {
     topicPageUtils.makeTopicList();
     messagePageUtils.populateTopic();
     messagePageUtils.makeMessageList();
-    userInfoUtils.addListener();
-    profile.addEventListener();
-    connexionUtils.init();
-    formHandler.init();
-    hamMenu.addEventListener();
-
+    addEventListener.init();
+    checkInfo();
+    
     if (app.disconnectButton !== null) {
       app.disconnectButton.addEventListener('click', app.disconnect)
     }
