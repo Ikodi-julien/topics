@@ -10,7 +10,7 @@
   <article class="topic message__topic">
     <header class="topic__header">
       <!-- Mettre une photo et nom auteur -->
-      <img src="/assets/default_user.png" alt="avatar">
+      <img src="/src/assets/default_user.png" alt="avatar">
       <h3 class="topic__header__author">by <%= topic.username %></h3>
       <p class="topic__header__createDate">
         le <time><%= new Date(topic.created_at).toLocaleDateString() %></time>
@@ -76,7 +76,7 @@
 
     <header class="message__header">
 
-      <img src="/assets/default_user.png" alt="avatar">
+      <img src="/src/assets/default_user.png" alt="avatar">
       <h3 class="message__header__author">???</h3>
 
       <p class="message__header__createDate">

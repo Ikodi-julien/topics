@@ -1,11 +1,12 @@
-import { topicPageUtils } from './topicUtils.js';
-import { messagePageUtils } from './messageUtils.js';
-import { quill } from './quill.js';
-import { userInfoUtils } from './userInfoUtils.js';
-import { profile } from './profileUtils.js';
-import { connexionUtils } from './connexionUtils.js';
-import { formHandler } from './formHandler.js';
-import { hamMenu } from './hamburger.js';
+import { topicPageUtils } from './js/topicUtils.js';
+import { messagePageUtils } from './js/messageUtils.js';
+import { quill } from './js/quill.js';
+import { userInfoUtils } from './js/userInfoUtils.js';
+import { profile } from './js/profileUtils.js';
+import { connexionUtils } from './js/connexionUtils.js';
+import { formHandler } from './js/formHandler.js';
+import { hamMenu } from './js/hamburger.js';
+import './css/style.css';
 
 const app = {
 
