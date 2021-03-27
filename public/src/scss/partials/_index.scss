@@ -1,9 +1,7 @@
-@forward './abstract/colors';
-@forward './abstract/sizes';
+@forward './main.scss';
+@forward './header.scss';
+@forward './info-user.scss';
+@forward './homepage.scss';
 @forward './topic.scss';
 @forward './connexion.scss';
-@forward './header.scss';
-@forward './homepage.scss';
-@forward './info-user.scss';
-@forward './main.scss';
 @forward './profile.scss';

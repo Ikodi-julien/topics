@@ -1,12 +1,16 @@
+import './css/reset.css';
+import './css/quill-emoji.css';
+import './css/style.css';
+
 import { topicPageUtils } from './js/topicUtils.js';
 import { messagePageUtils } from './js/messageUtils.js';
 import { quill } from './js/quill.js';
+import { quillRegister } from '../src/js/quill-emoji/src/quill-emoji'
 import { userInfoUtils } from './js/userInfoUtils.js';
 import { profile } from './js/profileUtils.js';
 import { connexionUtils } from './js/connexionUtils.js';
 import { formHandler } from './js/formHandler.js';
 import { hamMenu } from './js/hamburger.js';
-import './css/style.css';
 
 const app = {
 
@@ -25,6 +29,7 @@ const app = {
   },
 
   init: () => {
+    quillRegister();
     quill.makeForm();
     topicPageUtils.makeTopicList();
     messagePageUtils.populateTopic();

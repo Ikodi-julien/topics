@@ -14,6 +14,10 @@ module.exports = {
         use: ['style-loader', 'css-loader'],
       },
       {
+        test: /\.scss$/i,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
+      {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
       },
@@ -22,5 +26,10 @@ module.exports = {
         type: 'asset/resource',
       },
     ],
-  }
+  },
+  watch: true,
+  watchOptions: {
+    aggregateTimeout: 200,
+    ignored: /node_modules/,
+  },
 };
