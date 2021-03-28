@@ -1,6 +1,5 @@
 const express = require('express');
-require('dotenv')
-  .config();
+require('dotenv').config();
 
 const router = require('./app/router');
 const connexionViews = require('./app/connexion/view/connexionViews');
@@ -9,9 +8,7 @@ const app = express();
 const expressSession = require('express-session');
 
 // user urlencoded to get data from post
-
 app.use(express.urlencoded({ extended: false }));
-
 
 /*
  ** set functionnalities
@@ -24,19 +21,19 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 
 // http://expressjs.com/en/resources/middleware/express-session.html
-app.use(expressSession({
-
-  secret: 'quillers',
-  resave: false,
-  saveUninitialized: false,
-  unset: 'destroy',
-  cookie: {
-    maxAge: null,
-    secure: false
-  },
-  name: 'topics.sid'
-
-}));
+app.use(
+  expressSession({
+    secret: 'quillers',
+    resave: false,
+    saveUninitialized: false,
+    unset: 'destroy',
+    cookie: {
+      maxAge: 1000 * 30,
+      secure: false,
+    },
+    name: 'topics.sid',
+  })
+);
 
 //use the router
 app.use(router);
@@ -45,4 +42,7 @@ app.use(router);
 app.use(connexionViews.page404);
 /*------------------------------------------*/
 
-app.listen(process.env.PORT, console.log('server started at http://localhost:', process.env.PORT));
+app.listen(
+  process.env.PORT,
+  console.log('server started at http://localhost:', process.env.PORT)
+);
