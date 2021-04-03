@@ -7,6 +7,7 @@ const mainController = require('./main/controller/mainController');
 const connexionSwitch = require('./connexion/MW/connexionSwitch');
 const forumController = require('./forum/controller/controller');
 const getMessage = require('./main/MW/getMessage');
+const profile = require('./profile/controller/profileController');
 
 const router = express.Router();
 
@@ -20,9 +21,10 @@ router.get('/categories', getMessage, forumController.categories);
 router.get('/categories/:name', getMessage, forumController.category);
 router.get('/topics/:catname/:id', getMessage, forumController.topic);
 
-
 // CONNEXION
 router.get('/connexion/:view', getMessage, connexionSwitch.GET);
+// PROFIL
+router.get('/myProfile', profile.getProfile);
 
 /*------------ POST REQUESTS --------------*/
 

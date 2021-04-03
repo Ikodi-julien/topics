@@ -4,68 +4,63 @@ const connexionController = require('../controller/connexionController');
 const strapi = require('../../strapi/strapi');
 
 const APIController = {
-
   /**
    * After a user is identified, retrieve infos from google redirect url <code>
-   * @param {Objet} request 
-   * @param {Objet} response 
+   * @param {Objet} request
+   * @param {Objet} response
    */
   google: async (request, response) => {
-
     try {
-      const dataGoogle = await googleTools.getGoogleAccountFromCode(request.query.code);
+      const dataGoogle = await googleTools.getGoogleAccountFromCode(
+        request.query.code
+      );
 
       if (dataGoogle) {
-
         await APIController.setContext(dataGoogle, request, response);
-        return
-
+        return;
       } else {
         response.redirect('/connexion/stdLogin?msg_code=EC001');
       }
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
       response.redirect('/connexion/stdLogin?msg_code=EC010');
     }
   },
 
   github: async (request, response) => {
-
     // console.log('github')
     try {
-
-      const accessToken = await githubTools.getAccessTokenFromGithub(request, response)
+      const accessToken = await githubTools.getAccessTokenFromGithub(
+        request,
+        response
+      );
       const dataGithub = await githubTools.getUserFromToken(accessToken);
 
       // console.log(dataUser)
       if (dataGithub) {
-
         APIController.setContext(dataGithub, request, response);
-        return
-
+        return;
       } else {
         response.redirect('/connexion/stdLogin?msg_code=EC001');
       }
-
     } catch (error) {
-      console.log(error)
+      console.log(error);
       response.redirect('/connexion/stdLogin?msg_code=EC010');
     }
   },
 
   setContext: async (dataUser, request, response) => {
-
     const body = {
       identifier: dataUser.email,
       password: dataUser.password,
-    }
-    // console.log(body);
+    };
+    console.log(body);
     // Tentative de log in
-    const rawUser = await strapi.logUser(JSON.stringify(body));
+    const rawUser = await strapi.logUser(body);
     // console.log(dataUser);
 
-    if (rawUser.statusCode !== 400) { //
+    if (rawUser.statusCode !== 400) {
+      //
 
       if (typeof rawUser.jwt !== 'undefined') {
         // console.log('user :', dataUser);
@@ -78,18 +73,25 @@ const APIController = {
         request.session.messageFirstDisplay = true;
 
         response.redirect('/categories');
-
       } else {
         request.session.user.message = rawUser.data[0].messages[0].message;
-        response.redirect('/connexion/stdLogin')
+        response.redirect('/connexion/stdLogin');
       }
-
     } else {
+      console.log(
+        'setContext logUser error :',
+        rawUser.data[0].messages[0].message
+      );
+
       // Ici requête d'inscription
-      await connexionController.APICreateAccountControl(rawUser, request, response);
-      return
+      await connexionController.APICreateAccountControl(
+        dataUser,
+        request,
+        response
+      );
+      return;
     }
-  }
-}
+  },
+};
 
 module.exports = APIController;

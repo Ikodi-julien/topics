@@ -1,18 +1,13 @@
 <!-- Utiliser en dev pour controler les valeurs des variables lièes à la session -->
 
 <div class="infouser__button__container">
-  <div class="infouser__button" id="infouserButton"><i class="fas fa-user-astronaut"></i></div>
+  <div class="infouser__button" id="infouserButton">
+    <i class="fas fa-user-astronaut"></i>
+  </div>
 </div>
 
 <div class="infouser" id="infouser">
-
-  <% if (typeof session.user.message !== 'undefined') {%>
-
-  <p class="infouser__info" id="infoMessage">
-    <%= session.user.message %>
-  </p>
-  <% } %>
-
+  <p class="infouser__info" id="infoMessage"><%= session.user.message %></p>
   <% if (session.user.id > 0) { %>
 
   <p class="infouser__item">
@@ -20,12 +15,10 @@
   </p>
 
   <p class="infouser__item">
-    Pseudo : <%= session.user.username %>
+    Pseudo : <span id="userName"><%= session.user.username %></span>
   </p>
 
-  <p class="infouser__item">
-    Status : <%= session.user.role.name %>
-  </p>
+  <p class="infouser__item">Status : <%= session.user.role.name %></p>
 
   <% } else { %>
   <!-- <p class="infouser__item">
@@ -34,5 +27,4 @@
   <div class="infouser__connexion">Sign in to know more...</div>
 
   <% } %>
-
 </div>
